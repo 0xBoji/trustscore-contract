@@ -1,0 +1,6 @@
+/target
+/neardev/*
+/Cargo.lock
+*.rs~
+*.rs#
+.vscode/settings.json

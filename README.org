@@ -1,0 +1,50 @@
+#+TITLE: Started Template - Near Smartcontract
+#+AUTHOR: Dang Quang Vu
+#+EMAIL: eamondang@gmail.com
+#+SETUPFILE: ~/theme-readtheorg.setup
+#+HTML_HEAD: <style>pre.src{background:#343131;color:white;} </style>
+
++ Quickly build apps backed by the NEAR blockchain
++ Prerequisites
+
+#+begin_quote
++ Make sure you have a current version of Node.js & Rust installed => We recommend versions 18+ & rust 1.69
+#+end_quote
+
++ Requirements
+  + Cargo Make
+    #+begin_src sh :results output
+    cargo install cargo-make
+    cargo install cargo-generate
+    #+end_src
+
+  + Install Near Cli
+    #+begin_src sh :results output
+    npm install -g near-cli
+    #+end_src
+
+* Getting Started
+** Clone the repository
+#+begin_src sh :results output
+cargo generate --git https://github.com/eamondang/template-near-contract --name near-template
+#+end_src
+
+* Step by Step
+#+begin_quote
+Read more infomation in =Makefile.toml=
+#+end_quote
+
++ Prepare
+#+begin_src sh :results output
+cargo make prepare
+#+end_src
+
++ Build Contract
+#+begin_src sh :results output
+cargo make build
+#+end_src
+
++ deploy Contract
+#+begin_src sh :results output
+cargo make dev-deploy
+#+end_src
