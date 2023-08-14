@@ -1,0 +1,120 @@
+use near_sdk::{env, near_bindgen};
+
+use crate::models::{
+  contract::{ThreadScoreContract, ThreadScoreContractExt},
+  user::{JsonUser, UserId, UserMetadata, UserRoles, UserTraits},
+};
+
+#[near_bindgen]
+impl UserTraits for ThreadScoreContract {
+  /// Creates a new user with the provided nickname, first name, last name, and bio.
+  /// The fields first_name, last_name, and bio are optional.
+  fn create_user(
+    &mut self,
+    nickname: Option<String>,
+    first_name: Option<String>,
+    last_name: Option<String>,
+    avatar: Option<String>,
+    bio: Option<String>,
+  ) {
+    let user_id = env::signer_account_id();
+    let new_nickname = match nickname {
+      Some(n) => n,
+      None => user_id.to_string(),
+    };
+
+    let new_user_metadata = UserMetadata {
+      user_id: user_id.clone(),
+      nickname: new_nickname,
+      role: UserRoles::Unverified,
+      first_name,
+      last_name,
+      bio,
+      avatar,
+      created_at: env::block_timestamp_ms(),
+      updated_at: env::block_timestamp_ms(),
+      threads_owned: 0,
+      total_point: 1000,
+    };
+
+    let new_json_user = JsonUser { user_id: user_id.clone(), metadata: new_user_metadata, threads: Vec::new() };
+
+    self.user_metadata_by_id.insert(&user_id, &new_json_user);
+
+    self.subscriber_users.insert(&user_id);
+  }
+
+  // /// Returns a `JsonUser` representation of the user's metadata for the given user ID.
+  fn get_user_metadata_by_user_id(&self, user_id: UserId) -> Option<JsonUser> {
+    let found_user = self.user_metadata_by_id.get(&user_id);
+    found_user
+  }
+
+  // /// Update user information
+  fn update_user_information(
+    &mut self,
+    nickname: Option<String>,
+    first_name: Option<String>,
+    last_name: Option<String>,
+    bio: Option<String>,
+    avatar: Option<String>,
+  ) -> JsonUser {
+    // Check access
+    assert!(self.user_metadata_by_id.contains_key(&env::signer_account_id()), "You don't have access");
+
+    let mut user = self.user_metadata_by_id.get(&env::signer_account_id()).unwrap();
+
+    // Check attribute. If it have some -> update
+    if let Some(n) = nickname {
+      user.metadata.nickname = n
+    };
+    if let Some(f) = first_name {
+      user.metadata.first_name = Some(f)
+    }
+
+    if let Some(l) = last_name {
+      user.metadata.last_name = Some(l)
+    }
+
+    if let Some(b) = bio {
+      user.metadata.bio = Some(b)
+    }
+
+    if let Some(a) = avatar {
+      user.metadata.avatar = Some(a)
+    }
+
+    // Storage time information when user update
+    user.metadata.updated_at = env::block_timestamp_ms();
+
+    // Storage the change
+    self.user_metadata_by_id.insert(&env::signer_account_id(), &user);
+
+    // Return
+    user
+  }
+
+  /// Get all information of users
+  fn get_all_user_metadata(&self, from_index: Option<u32>, limit: Option<u32>) -> Vec<JsonUser> {
+    let mut all_user = Vec::new();
+    for user_id in
+      self.subscriber_users.iter().skip(from_index.unwrap_or(0) as usize).take(limit.unwrap_or(20) as usize)
+    {
+      all_user.push(self.user_metadata_by_id.get(&user_id).unwrap());
+    }
+    all_user
+  }
+
+  /// Check user role
+  fn check_user_role(&self, user_id: UserId) -> UserRoles {
+    // check exit
+
+    let found_user = self.user_metadata_by_id.get(&user_id);
+
+    if let Some(u) = found_user {
+      u.metadata.role
+    } else {
+      UserRoles::NoRole
+    }
+  }
+}

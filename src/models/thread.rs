@@ -31,7 +31,7 @@ pub struct ThreadMetadata {
   pub creator_id: UserId,
 
   /// The Content of this thread
-  pub content: String,
+  pub content: Option<String>,
 
   /// Date when the thread was created, represented as a timestamp.
   pub created_at: u64,
@@ -57,13 +57,14 @@ pub trait ThreadFeatures {
     &mut self,
     title: String,
     description: Option<String>,
+    content: Option<String>,
     media: Option<String>,
-    price: Balance,
+    init_point: Balance,
   ) -> ThreadMetadata;
 
-  fn get_thread_metadata_by_thread_id(&self, thread_id: ThreadId) -> Option<ThreadMetadata>;
+   fn get_thread_metadata_by_thread_id(&self, thread_id: ThreadId) -> Option<ThreadMetadata>;
 
-  /// Get all the thread per user have. Current and complete thread
+  // /// Get all the thread per user have. Current and complete thread
   fn get_all_threads_per_user_own(
     &self,
     user_id: UserId,
@@ -71,6 +72,6 @@ pub trait ThreadFeatures {
     limit: Option<u32>,
   ) -> Vec<ThreadMetadata>;
 
-   /// Check user completed thread or not
-  fn check_thread_completed(&self, thread_id: ThreadId, user_id: UserId) -> bool;
+  // /// Check user completed thread or not
+  // fn check_thread_completed(&self, thread_id: ThreadId, user_id: UserId) -> bool;
 }

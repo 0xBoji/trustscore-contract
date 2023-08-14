@@ -1,16 +1,14 @@
-use std::thread::ThreadId;
-
 use near_sdk::{
   collections::{LazyOption, LookupMap, UnorderedSet},
   near_bindgen,
   serde::{Deserialize, Serialize},
-  AccountId, PanicOnDefault,
+  AccountId, PanicOnDefault, CryptoHash,
 };
 
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 
 use super::{
-  thread::ThreadMetadata,
+  thread::{ThreadId, ThreadMetadata},
   user::{JsonUser, UserId},
 };
 
@@ -45,7 +43,7 @@ pub struct ThreadScoreContract {
   pub owner_id: AccountId,
 
   /// Metadata associated with the ThreadScore contract.
-  pub metadata_contract: LazyOption<ThreadScoreContractMetadata>,
+  pub contract_metadata: LazyOption<ThreadScoreContractMetadata>,
 
   /// Users
   /// Storage all user_id of subscriber users -> For count all of users in the system
@@ -60,4 +58,14 @@ pub struct ThreadScoreContract {
 
   /// Map of `ThreadMetadata` by Thread ID.
   pub thread_metadata_by_id: LookupMap<ThreadId, ThreadMetadata>,
+}
+
+#[derive(BorshSerialize)]
+pub enum StorageKey {
+  ContractMetadata,
+  SubscriberUsers,
+  UserMetadataById,
+  ThreadsPerUser,
+  ThreadsPerUserInner { account_id_hash: CryptoHash },
+  ThreadMetadataById,
 }

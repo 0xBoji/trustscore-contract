@@ -18,3 +18,5 @@ panic = "abort"
 
 [dependencies]
 near-sdk = "4.1.1"
+unidecode = "0.3.0"
+
