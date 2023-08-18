@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use near_sdk::{
   borsh::{self, BorshDeserialize, BorshSerialize},
   serde::{Deserialize, Serialize},
-  AccountId, Balance,
+  AccountId, Balance, Timestamp, json_types::U64,
 };
 
 use super::user::UserId;
@@ -21,11 +21,8 @@ pub struct ThreadMetadata {
   /// Name of the thread.
   pub title: String,
 
-  /// Detailed description of the thread.
-  pub description: Option<String>,
-
-  /// Thumbnail of the thread
-  pub media: Option<String>,
+  /// media_link of the thread
+  pub media_link: Option<String>,
 
   /// Creator's account ID.
   pub creator_id: UserId,
@@ -36,8 +33,11 @@ pub struct ThreadMetadata {
   /// Date when the thread was created, represented as a timestamp.
   pub created_at: u64,
 
-  /// Init point of this thread, of type `U128`.
+  /// Init point of this thread.
   pub init_point: Balance,
+
+  /// space_name of this thread
+  pub space_name: String,
 
   /// Number of user currently subscribed this thread.
   pub users_map: HashMap<AccountId, u64>,
@@ -50,19 +50,25 @@ pub struct ThreadMetadata {
 
   /// Count of all the ratings this thread has received.
   pub choices_rating: HashMap<u64, u8>,
+
+  pub start_time: Timestamp,
+
+  pub end_time: Timestamp,
 }
 
 pub trait ThreadFeatures {
   fn create_thread(
     &mut self,
     title: String,
-    description: Option<String>,
     content: Option<String>,
-    media: Option<String>,
+    media_link: Option<String>,
     init_point: Balance,
+    space_name: String,
+    start_time: U64,
+    end_time: U64,
   ) -> ThreadMetadata;
 
-   fn get_thread_metadata_by_thread_id(&self, thread_id: ThreadId) -> Option<ThreadMetadata>;
+  fn get_thread_metadata_by_thread_id(&self, thread_id: ThreadId) -> Option<ThreadMetadata>;
 
   // /// Get all the thread per user have. Current and complete thread
   fn get_all_threads_per_user_own(

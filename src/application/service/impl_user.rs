@@ -114,7 +114,7 @@ impl UserTraits for ThreadScoreContract {
     if let Some(u) = found_user {
       u.metadata.role
     } else {
-      UserRoles::NoRole
+      UserRoles::Unverified
     }
   }
 }

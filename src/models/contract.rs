@@ -9,7 +9,7 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 
 use super::{
   thread::{ThreadId, ThreadMetadata},
-  user::{JsonUser, UserId},
+  user::{JsonUser, UserId}, space::{SpaceId, SpaceMetadata},
 };
 
 /// The `ThreadScoreContractMetadata` struct represents metadata for an ThreadScore contract.
@@ -58,6 +58,13 @@ pub struct ThreadScoreContract {
 
   /// Map of `ThreadMetadata` by Thread ID.
   pub thread_metadata_by_id: LookupMap<ThreadId, ThreadMetadata>,
+
+  /// Space
+  /// Map of `SpaceMetadata` by Thread ID.
+  pub space_metadata_by_id: LookupMap<SpaceId, SpaceMetadata>,
+
+  /// Map of thread sets by user ID.
+  pub threads_per_space: LookupMap<SpaceId, UnorderedSet<ThreadId>>,
 }
 
 #[derive(BorshSerialize)]
@@ -68,4 +75,7 @@ pub enum StorageKey {
   ThreadsPerUser,
   ThreadsPerUserInner { account_id_hash: CryptoHash },
   ThreadMetadataById,
+  SpaceMetadataById,
+  ThreadsPerSpace,
+  ThreadsPerSpaceInner { space_id_hash: CryptoHash },
 }
