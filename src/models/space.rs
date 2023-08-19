@@ -23,18 +23,14 @@ pub struct SpaceMetadata {
 
   /// Date when the thread was created, represented as a timestamp.
   pub created_at: u64,
-
-  /// Number of spaces.
-  pub threads_count: u8,
-
-  /// Map of threads associated with the space.
-  pub threads: Vec<ThreadId>,
 }
 
 pub trait SpaceFeatures {
   fn create_space(&mut self, space_name: String) -> SpaceMetadata;
 
   fn get_space_metadata_by_thread_id(&self, space_id: SpaceId) -> Option<SpaceMetadata>;
+
+  fn get_all_threads_of_space_by_space_id(&self, space_id: SpaceId) -> Vec<ThreadId>;
 
   // // /// Get all the space. Current and complete space
   // fn get_all_spaces(&self, start: Option<u32>, limit: Option<u32>) -> Vec<SpaceMetadata>;

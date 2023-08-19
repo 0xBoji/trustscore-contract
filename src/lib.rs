@@ -36,13 +36,13 @@ impl ThreadScoreContract {
     Self {
       owner_id,
       contract_metadata: LazyOption::new(ContractMetadata.try_to_vec().unwrap(), Some(&meta_data)),
-      
+
       subscriber_users: UnorderedSet::new(SubscriberUsers.try_to_vec().unwrap()),
       user_metadata_by_id: LookupMap::new(UserMetadataById.try_to_vec().unwrap()),
-      
+
       threads_per_user: LookupMap::new(ThreadsPerUser.try_to_vec().unwrap()),
       thread_metadata_by_id: LookupMap::new(ThreadMetadataById.try_to_vec().unwrap()),
-      
+
       space_metadata_by_id: LookupMap::new(SpaceMetadataById.try_to_vec().unwrap()),
       threads_per_space: LookupMap::new(ThreadsPerSpace.try_to_vec().unwrap()),
     }

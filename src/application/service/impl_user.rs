@@ -110,11 +110,21 @@ impl UserTraits for ThreadScoreContract {
     // check exit
 
     let found_user = self.user_metadata_by_id.get(&user_id);
+    assert!(!found_user.is_none(), "Your account is not created!");
 
-    if let Some(u) = found_user {
-      u.metadata.role
-    } else {
-      UserRoles::Unverified
-    }
+    found_user.unwrap().metadata.role
+  }
+
+  /// Check user role
+  fn active_user_role(&mut self, user_id: UserId) -> Option<JsonUser> {
+    // check exit
+    let mut found_user = self.user_metadata_by_id.get(&user_id).unwrap();
+
+    // TODO: validate ADMIN role
+
+    found_user.metadata.role = UserRoles::Verified;
+    self.user_metadata_by_id.insert(&user_id, &found_user);
+
+    Some(found_user)
   }
 }

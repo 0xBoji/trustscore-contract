@@ -2,14 +2,15 @@ use near_sdk::{
   collections::{LazyOption, LookupMap, UnorderedSet},
   near_bindgen,
   serde::{Deserialize, Serialize},
-  AccountId, PanicOnDefault, CryptoHash,
+  AccountId, CryptoHash, PanicOnDefault,
 };
 
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 
 use super::{
+  space::{SpaceId, SpaceMetadata},
   thread::{ThreadId, ThreadMetadata},
-  user::{JsonUser, UserId}, space::{SpaceId, SpaceMetadata},
+  user::{JsonUser, UserId},
 };
 
 /// The `ThreadScoreContractMetadata` struct represents metadata for an ThreadScore contract.

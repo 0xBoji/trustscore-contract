@@ -102,4 +102,7 @@ pub trait UserTraits {
 
   /// Check user role
   fn check_user_role(&self, user_id: UserId) -> UserRoles;
+
+  /// Check user role
+  fn active_user_role(&mut self, user_id: UserId) -> Option<JsonUser>;
 }

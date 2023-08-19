@@ -2,8 +2,9 @@ use std::collections::HashMap;
 
 use near_sdk::{
   borsh::{self, BorshDeserialize, BorshSerialize},
+  json_types::U64,
   serde::{Deserialize, Serialize},
-  AccountId, Balance, Timestamp, json_types::U64,
+  AccountId, Balance, Timestamp,
 };
 
 use super::user::UserId;
