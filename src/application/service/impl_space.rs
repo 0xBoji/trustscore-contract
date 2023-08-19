@@ -22,7 +22,7 @@ impl SpaceFeatures for ThreadScoreContract {
     };
 
     self.space_metadata_by_id.insert(&space_id, &new_space);
-
+    self.space_list.insert(&space_id);
     new_space
   }
 
@@ -35,6 +35,14 @@ impl SpaceFeatures for ThreadScoreContract {
     thread_list.to_vec()
   }
 
-  // /// Get all the space. Current and complete space
-  // fn get_all_spaces(&self, start: Option<u32>, limit: Option<u32>) -> Vec<SpaceMetadata>;
+  /// Get all the space. Current and complete space
+  fn get_all_spaces(&self, from_index: Option<u32>, limit: Option<u32>) -> Vec<SpaceMetadata> {
+    let mut all_space = Vec::<SpaceMetadata>::new();
+    for space_id in
+      self.space_list.iter().skip(from_index.unwrap_or(0) as usize).take(limit.unwrap_or(20) as usize)
+    {
+      all_space.push(self.space_metadata_by_id.get(&space_id).unwrap());
+    }
+    all_space
+  }
 }

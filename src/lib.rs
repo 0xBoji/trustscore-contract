@@ -4,8 +4,8 @@ pub mod models;
 // use application::*;
 use models::contract::{
   StorageKey::{
-    ContractMetadata, SpaceMetadataById, SubscriberUsers, ThreadMetadataById, ThreadsPerSpace, ThreadsPerUser,
-    UserMetadataById,
+    ContractMetadata, SpaceList, SpaceMetadataById, SubscriberUsers, ThreadMetadataById, ThreadsPerSpace,
+    ThreadsPerUser, UserMetadataById,
   },
   ThreadScoreContract, ThreadScoreContractExt, ThreadScoreContractMetadata,
 };
@@ -45,6 +45,7 @@ impl ThreadScoreContract {
 
       space_metadata_by_id: LookupMap::new(SpaceMetadataById.try_to_vec().unwrap()),
       threads_per_space: LookupMap::new(ThreadsPerSpace.try_to_vec().unwrap()),
+      space_list: UnorderedSet::new(SpaceList.try_to_vec().unwrap()),
     }
   }
 

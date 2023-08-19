@@ -32,6 +32,6 @@ pub trait SpaceFeatures {
 
   fn get_all_threads_of_space_by_space_id(&self, space_id: SpaceId) -> Vec<ThreadId>;
 
-  // // /// Get all the space. Current and complete space
-  // fn get_all_spaces(&self, start: Option<u32>, limit: Option<u32>) -> Vec<SpaceMetadata>;
+  /// Get all the space. Current and complete space
+  fn get_all_spaces(&self, from_index: Option<u32>, limit: Option<u32>) -> Vec<SpaceMetadata>;
 }

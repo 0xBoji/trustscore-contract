@@ -113,10 +113,23 @@
       created_at: 1692352351446,
     }
     ```
-- get info của 1 space
+- get_all_threads_of_space_by_space_id info của 1 space
   ```cm call get_all_threads_of_space_by_space_id '{"space_id":"cryto"}' --account_id gmfam.testnet```
   ```
   [ 'gmfam.testnet_thread_title_01', 'gmfam.testnet_thread_title_02' ]
+
+  ```
+- get all spaces info
+  ```cm call get_all_spaces --account_id gmfam.testnet```
+  ```
+  [
+  {
+    space_id: 'cryto',
+    space_name: 'cryto',
+    creator_id: 'gmfam.testnet',
+    created_at: 1692433719381
+  }
+]
 
   ```
 
@@ -136,3 +149,5 @@
 
 + deploy Contract
 `cargo make dev-deploy`
+
+near deploy --accountId trust-score-project.gmfam.testnet --wasmFile target/wasm32-unknown-unknown/release/thread_score.wasm
