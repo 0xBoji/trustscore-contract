@@ -23,6 +23,8 @@ impl UserTraits for ThreadScoreContract {
       None => user_id.to_string(),
     };
 
+    assert!(self.user_metadata_by_id.get(&user_id).is_none(), "This user already created!");
+
     let new_user_metadata = UserMetadata {
       user_id: user_id.clone(),
       nickname: new_nickname,

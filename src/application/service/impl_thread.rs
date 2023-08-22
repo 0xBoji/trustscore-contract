@@ -28,12 +28,15 @@ impl ThreadFeatures for ThreadScoreContract {
     let thread_id = convert_title_to_id(&title, creator_id.to_string());
 
     let creator_metadata = self.user_metadata_by_id.get(&creator_id);
-    assert!(!creator_metadata.is_none(), "Your account is not created!");
+    
+    assert!(creator_metadata.is_some(), "Your account is not created!");
 
     // TODO: validate check role
     let creator_role = creator_metadata.unwrap().metadata.role;
 
     assert!(creator_role == UserRoles::Verified, "Your account is not verified!");
+
+    assert!(self.thread_metadata_by_id.get(&thread_id).is_none(), "This thread already created!");
 
     let thread_meta = ThreadMetadata {
       thread_id: thread_id.clone(),
