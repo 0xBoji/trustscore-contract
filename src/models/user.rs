@@ -87,6 +87,7 @@ pub trait UserTraits {
   // /// Returns a `JsonUser` representation of the user's metadata for the given user ID.
   fn get_user_metadata_by_user_id(&self, user_id: UserId) -> Option<JsonUser>;
 
+  // TODO: add readme.md
   // /// Update user information
   fn update_user_information(
     &mut self,
@@ -97,9 +98,11 @@ pub trait UserTraits {
     avatar: Option<String>,
   ) -> JsonUser;
 
+  // TODO: add readme.md
   // /// Get all information of users
   fn get_all_user_metadata(&self, from_index: Option<u32>, limit: Option<u32>) -> Vec<JsonUser>;
 
+  // TODO: add readme.md
   /// Check user role
   fn check_user_role(&self, user_id: UserId) -> UserRoles;
 

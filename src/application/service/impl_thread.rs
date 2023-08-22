@@ -5,7 +5,7 @@ use crate::{
   models::{
     contract::{StorageKey, ThreadScoreContract, ThreadScoreContractExt},
     space::SpaceFeatures,
-    thread::{ThreadFeatures, ThreadId, ThreadMetadata},
+    thread::{ThreadFeatures, ThreadId, ThreadMetadata, ThreadState, ThreadVote},
     user::{UserId, UserRoles},
   },
 };
@@ -28,7 +28,7 @@ impl ThreadFeatures for ThreadScoreContract {
     let thread_id = convert_title_to_id(&title, creator_id.to_string());
 
     let creator_metadata = self.user_metadata_by_id.get(&creator_id);
-    
+
     assert!(creator_metadata.is_some(), "Your account is not created!");
 
     // TODO: validate check role
@@ -108,18 +108,41 @@ impl ThreadFeatures for ThreadScoreContract {
     limit: Option<u32>,
   ) -> Vec<ThreadMetadata> {
     let mut result: Vec<ThreadMetadata> = Vec::new();
-    let thread_array = self.user_metadata_by_id.get(&user_id).unwrap().threads;
 
-    // println!("{start} {limit}");
+    let thread_array = self.threads_per_user.get(&user_id).unwrap();
 
-    for t in thread_array {
-      let thread_found = self.thread_metadata_by_id.get(&t);
+    for thread_id in thread_array.iter() {
+      let thread_found = self.thread_metadata_by_id.get(&thread_id);
       result.push(thread_found.unwrap());
     }
 
     result
   }
 
-  // /// Check user completed thread or not
-  // fn check_thread_completed(&self, thread_id: ThreadId, user_id: UserId) -> bool;
+  // Check thread status
+  fn check_thread_status(&self, thread_id: ThreadId) -> ThreadState {
+    let thread_found = self.thread_metadata_by_id.get(&thread_id);
+
+    assert!(thread_found.is_some(), "Thread not existed!");
+
+    let current_time = env::block_timestamp_ms();
+    let start_time = thread_found.clone().unwrap().start_time;
+    let end_time = thread_found.unwrap().end_time;
+
+    if current_time >= end_time {
+      return ThreadState::Closed;
+    }
+
+    if current_time > start_time {
+      return ThreadState::Open;
+    }
+
+    return ThreadState::Upcoming;
+  }
+
+  fn vote_thread(&mut self, thread_id: ThreadId, choice: u8) -> Option<ThreadVote> {
+    // created_at
+    //voter
+    None
+  }
 }

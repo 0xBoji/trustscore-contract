@@ -12,6 +12,22 @@ use super::user::UserId;
 /// `ThreadId` is a type alias for `String`, typically representing a unique identifier for a thread in the system.
 pub type ThreadId = String;
 
+#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone)]
+#[serde(crate = "near_sdk::serde")]
+pub enum ThreadState {
+  Closed,
+  Open,
+  Upcoming,
+}
+
+#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone)]
+#[serde(crate = "near_sdk::serde")]
+pub struct ThreadVote {
+  thread_id: ThreadId,
+  choice: u8,
+  created_at: Timestamp,
+  voter: UserId,
+}
 /// The `ThreadMetadata` struct represents metadata for a thread in the system.
 #[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone)]
 #[serde(crate = "near_sdk::serde")]
@@ -79,6 +95,9 @@ pub trait ThreadFeatures {
     limit: Option<u32>,
   ) -> Vec<ThreadMetadata>;
 
-  // /// Check user completed thread or not
-  // fn check_thread_completed(&self, thread_id: ThreadId, user_id: UserId) -> bool;
+  // /// Check thread status
+  fn check_thread_status(&self, thread_id: ThreadId) -> ThreadState;
+
+  // TODO: add readme.md
+  fn vote_thread(&mut self, thread_id: ThreadId, choice: u8) -> Option<ThreadVote>;
 }

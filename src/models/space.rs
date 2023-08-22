@@ -28,6 +28,7 @@ pub struct SpaceMetadata {
 pub trait SpaceFeatures {
   fn create_space(&mut self, space_name: String) -> SpaceMetadata;
 
+  // TODO: add readme.md
   fn get_space_metadata_by_space_id(&self, space_id: SpaceId) -> Option<SpaceMetadata>;
 
   fn get_all_threads_of_space_by_space_id(&self, space_id: SpaceId) -> Vec<ThreadId>;
