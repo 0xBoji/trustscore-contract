@@ -35,11 +35,15 @@ impl UserTraits for ThreadScoreContract {
       avatar,
       created_at: env::block_timestamp_ms(),
       updated_at: env::block_timestamp_ms(),
-      threads_owned: 0,
-      total_point: 1000,
     };
 
-    let new_json_user = JsonUser { user_id: user_id.clone(), metadata: new_user_metadata, threads: Vec::new() };
+    let new_json_user = JsonUser {
+      user_id: user_id.clone(),
+      metadata: new_user_metadata,
+      threads: Vec::new(),
+      threads_owned: 0_u32,
+      total_point: 1000,
+    };
 
     self.user_metadata_by_id.insert(&user_id, &new_json_user);
 

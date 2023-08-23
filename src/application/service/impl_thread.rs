@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, u8};
 
 use crate::{
   application::repository::{convert_title_to_id, convert_title_to_id_no_account, hash_account_id, hash_space_id},
@@ -23,16 +23,28 @@ impl ThreadFeatures for ThreadScoreContract {
     space_name: String,
     start_time: U64,
     end_time: U64,
+    options: Vec<String>,
   ) -> ThreadMetadata {
+    // TODO: check point
     let creator_id = env::signer_account_id();
+
+    // check option have at least 2
+    assert!(options.len() > 1, "Vote option must be greater than 2!");
+    assert!(options.len() < 4, "Vote option must be less than 4!");
+
+    let mut choices_map = HashMap::<u8, String>::new();
+
+    options.iter().enumerate().for_each(|(idx, option)| {
+      choices_map.insert(idx as u8, option.to_owned());
+    });
+
     let thread_id = convert_title_to_id(&title, creator_id.to_string());
 
-    let creator_metadata = self.user_metadata_by_id.get(&creator_id);
+    let creator_json = self.user_metadata_by_id.get(&creator_id);
 
-    assert!(creator_metadata.is_some(), "Your account is not created!");
+    assert!(creator_json.is_some(), "Your account is not created!");
 
-    // TODO: validate check role
-    let creator_role = creator_metadata.unwrap().metadata.role;
+    let creator_role = creator_json.unwrap().metadata.role;
 
     assert!(creator_role == UserRoles::Verified, "Your account is not verified!");
 
@@ -49,10 +61,11 @@ impl ThreadFeatures for ThreadScoreContract {
       start_time: start_time.into(),
       end_time: end_time.into(),
       created_at: env::block_timestamp_ms(),
-      users_map: HashMap::new(),
-      choices_count: 2,
-      choices_map: HashMap::new(),
+      choices_count: options.len() as u8,
+      choices_map,
+      user_votes_map: HashMap::new(),
       choices_rating: HashMap::new(),
+      last_id: 0_u32,
     };
 
     let init_new_user_threads_list: UnorderedSet<String> = UnorderedSet::new(
@@ -92,6 +105,14 @@ impl ThreadFeatures for ThreadScoreContract {
 
     self.threads_per_space.insert(&space_id, &new_space_threads_list);
 
+    // update Total number of threads owned by the user.
+    self.user_metadata_by_id.get(&creator_id);
+
+    let mut new_json_creator = self.user_metadata_by_id.get(&creator_id).unwrap();
+    new_json_creator.threads_owned += 1;
+
+    self.user_metadata_by_id.insert(&creator_id, &new_json_creator);
+
     thread_meta
   }
 
@@ -111,7 +132,7 @@ impl ThreadFeatures for ThreadScoreContract {
 
     let thread_array = self.threads_per_user.get(&user_id).unwrap();
 
-    for thread_id in thread_array.iter() {
+    for thread_id in thread_array.iter().skip(start.unwrap_or(0_u32) as usize).take(limit.unwrap_or(5) as usize) {
       let thread_found = self.thread_metadata_by_id.get(&thread_id);
       result.push(thread_found.unwrap());
     }
@@ -120,7 +141,7 @@ impl ThreadFeatures for ThreadScoreContract {
   }
 
   // Check thread status
-  fn check_thread_status(&self, thread_id: ThreadId) -> ThreadState {
+  fn get_thread_status(&self, thread_id: &ThreadId) -> ThreadState {
     let thread_found = self.thread_metadata_by_id.get(&thread_id);
 
     assert!(thread_found.is_some(), "Thread not existed!");
@@ -140,9 +161,60 @@ impl ThreadFeatures for ThreadScoreContract {
     return ThreadState::Upcoming;
   }
 
-  fn vote_thread(&mut self, thread_id: ThreadId, choice: u8) -> Option<ThreadVote> {
-    // created_at
-    //voter
+  fn vote_thread(&mut self, thread_id: ThreadId, choice_number: u8, point: u32) -> Option<ThreadVote> {
+    let voter = env::signer_account_id();
+
+    assert!(point > 10, "Your point must be greater than 10!");
+
+    // check point of user > initial point
+    let found_voter = self.user_metadata_by_id.get(&voter);
+    assert!(found_voter.is_some(), "This user is not existed!");
+
+    if let Some(json_user) = &found_voter {
+      assert!(json_user.total_point > point, "You don't have enough point!");
+    }
+
+    // check thread id valid
+    let thread_found = self.thread_metadata_by_id.get(&thread_id);
+    assert!(thread_found.is_some(), "Thread is not existed!");
+
+    // check time is valid
+
+    let cur_thread_state = self.get_thread_status(&thread_id);
+    assert!(cur_thread_state != ThreadState::Upcoming, "This thread is not live yet!");
+    assert!(cur_thread_state != ThreadState::Closed, "This thread is ended!");
+
+    // check choice is valid
+    if let Some(mut thread_metadata) = thread_found {
+      assert!(thread_metadata.choices_map.get(&choice_number).is_some(), "Your choice is not valid!");
+
+      // update user_votes_map
+      let new_user_votes_map = thread_metadata.user_votes_map.get_key_value(&voter);
+
+      assert!(new_user_votes_map.is_none(), "This user already voted!");
+
+      thread_metadata.user_votes_map.insert(voter.clone(), (choice_number, point));
+
+      // update choices_rating
+      if let Some(cur_point) = thread_metadata.choices_rating.get_mut(&choice_number) {
+        *cur_point += point;
+      }
+      let old_choice_rating = thread_metadata.choices_rating.get(&choice_number).unwrap_or(&0_u32);
+
+      let new_choice_rating = *old_choice_rating + point;
+
+      thread_metadata.choices_rating.insert(choice_number, new_choice_rating);
+
+      self.thread_metadata_by_id.insert(&thread_id, &thread_metadata);
+    }
+
+    // update new point for user
+    let mut new_json_user = found_voter.unwrap();
+
+    new_json_user.total_point -= point;
+
+    self.user_metadata_by_id.insert(&voter, &new_json_user);
+
     None
   }
 }

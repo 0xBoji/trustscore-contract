@@ -48,12 +48,6 @@ pub struct UserMetadata {
 
   /// Unix timestamp (in seconds) when the user account was last updated.
   pub updated_at: u64,
-
-  /// Total number of threads owned by the user.
-  pub threads_owned: u32,
-
-  /// User's total points.
-  pub total_point: u32,
 }
 
 /// The `JsonUser` struct provides a comprehensive view of a user in the system.
@@ -69,6 +63,12 @@ pub struct JsonUser {
 
   /// Map of threads associated with the user.
   pub threads: Vec<ThreadId>,
+
+  /// User's total points.
+  pub total_point: u32,
+
+  /// Total number of threads owned by the user.
+  pub threads_owned: u32,
 }
 
 /// The `UserTraits` trait defines a set of behaviors associated with a user in the system.

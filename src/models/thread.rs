@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use near_sdk::{
   borsh::{self, BorshDeserialize, BorshSerialize},
+
   json_types::U64,
   serde::{Deserialize, Serialize},
   AccountId, Balance, Timestamp,
@@ -12,7 +13,7 @@ use super::user::UserId;
 /// `ThreadId` is a type alias for `String`, typically representing a unique identifier for a thread in the system.
 pub type ThreadId = String;
 
-#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone)]
+#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone, PartialEq)]
 #[serde(crate = "near_sdk::serde")]
 pub enum ThreadState {
   Closed,
@@ -56,17 +57,21 @@ pub struct ThreadMetadata {
   /// space_name of this thread
   pub space_name: String,
 
-  /// Number of user currently subscribed this thread.
-  pub users_map: HashMap<AccountId, u64>,
+  // /// Number of user currently subscribed this thread.
+  // pub users_map: UnorderedSet<UserId>,
+  pub last_id: u32,
 
   /// Number of choices this thread has.
   pub choices_count: u8,
 
   /// Number of choice this thread has.
-  pub choices_map: HashMap<AccountId, u8>,
+  pub choices_map: HashMap<u8, String>,
+
+  /// Number of choice this thread has.
+  pub user_votes_map: HashMap<AccountId, (u8, u32)>,
 
   /// Count of all the ratings this thread has received.
-  pub choices_rating: HashMap<u64, u8>,
+  pub choices_rating: HashMap<u8, u32>,
 
   pub start_time: Timestamp,
 
@@ -83,6 +88,7 @@ pub trait ThreadFeatures {
     space_name: String,
     start_time: U64,
     end_time: U64,
+    options: Vec<String>,
   ) -> ThreadMetadata;
 
   fn get_thread_metadata_by_thread_id(&self, thread_id: ThreadId) -> Option<ThreadMetadata>;
@@ -96,8 +102,7 @@ pub trait ThreadFeatures {
   ) -> Vec<ThreadMetadata>;
 
   // /// Check thread status
-  fn check_thread_status(&self, thread_id: ThreadId) -> ThreadState;
+  fn get_thread_status(&self, thread_id: &ThreadId) -> ThreadState;
 
-  // TODO: add readme.md
-  fn vote_thread(&mut self, thread_id: ThreadId, choice: u8) -> Option<ThreadVote>;
+  fn vote_thread(&mut self, thread_id: ThreadId, choice: u8, point: u32) -> Option<ThreadVote>;
 }

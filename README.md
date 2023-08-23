@@ -74,17 +74,17 @@
     metadata: {
       user_id: 'gmfam.testnet',
       nickname: 'longn',
-      role: 'Unverified',
+      role: 'Verified',
       first_name: 'Ân',
       last_name: 'Nguyễn Văn',
       bio: 'this is my bio',
       avatar: 'bafkreibnaelo4monu6jpndqtb3pmza22j7k77gcak3xrux6mrkdq5fakuu',
-      created_at: 1692736081052,
-      updated_at: 1692736081052,
-      threads_owned: 0,
-      total_point: 1000
+      created_at: 1692823540083,
+      updated_at: 1692823540083
     },
-    threads: []
+    threads: [],
+    total_point: 1000,
+    threads_owned: 0
   }
   ```
 
@@ -100,24 +100,24 @@
     metadata: {
       user_id: 'gmfam.testnet',
       nickname: 'longn',
-      role: 'Verified', // Role updated
+      role: 'Verified',
       first_name: 'Ân',
       last_name: 'Nguyễn Văn',
       bio: 'this is my bio',
       avatar: 'bafkreibnaelo4monu6jpndqtb3pmza22j7k77gcak3xrux6mrkdq5fakuu',
-      created_at: 1692736081052,
-      updated_at: 1692736081052,
-      threads_owned: 0,
-      total_point: 1000
+      created_at: 1692823540083,
+      updated_at: 1692823540083
     },
-    threads: []
+    threads: [],
+    total_point: 1000,
+    threads_owned: 0
   }
   ```
 
 - tạo 1 thread mới
 
   ```
-  cm call create_thread '{"title": "thread title 01", "description": "thread desc 01", "media_link":"bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym", "init_point": 9000000000000, "space_name": "crypto trading", "start_time": "1692351435321", "end_time": "1692352310056"}' --account_id gmfam.testnet
+  cm call create_thread '{"title": "thread title 01", "description": "thread desc 01", "media_link":"bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym", "init_point": 9000000000000, "space_name": "crypto trading", "start_time": "1692824790000", "end_time": "1695477352000", "options": ["Yes", "No"]}' --account_id gmfam.testnet
   ```
 
   ```
@@ -127,12 +127,13 @@
     media_link: 'bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym',
     creator_id: 'gmfam.testnet',
     content: null,
-    created_at: 1692737536480,
+    created_at: 1692823747727,
     init_point: 9000000000000,
     space_name: 'crypto trading',
-    users_map: {},
+    last_id: 0,
     choices_count: 2,
-    choices_map: {},
+    choices_map: { '0': 'Yes', '1': 'No' },
+    user_votes_map: {},
     choices_rating: {},
     start_time: 1692351435321,
     end_time: 1692352310056
@@ -167,7 +168,7 @@
 - lấy status của 1 thread by thread_id
 
   ```
-  cm call check_thread_status '{"thread_id":"gmfam.testnet_thread_title_01"}' --account_id gmfam.testnet
+  cm call get_thread_status '{"thread_id":"gmfam.testnet_thread_title_01"}' --account_id gmfam.testnet
   ```
 
   ```
@@ -280,6 +281,14 @@
     }
   ]
   ```
+- vote thread by thread_id
+
+  ```
+  cm call vote_thread '{"thread_id":"gmfam.testnet_thread_title_01", "choice_number": 0, "point": 50}' --account_id gmfam.testnet
+  ```
+
+  ```
+  'Closed' // 'Open', 'Upcoming'
 
 ### Requirements
 
