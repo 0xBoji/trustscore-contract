@@ -104,4 +104,6 @@ pub trait ThreadFeatures {
   fn get_thread_status(&self, thread_id: &ThreadId) -> ThreadState;
 
   fn vote_thread(&mut self, thread_id: ThreadId, choice: u8, point: u32) -> Option<String>;
+
+  fn end_thread(&mut self, thread_id: ThreadId) -> Option<String>;
 }

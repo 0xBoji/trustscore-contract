@@ -201,11 +201,6 @@ impl ThreadFeatures for ThreadScoreContract {
       if let Some(cur_point) = thread_metadata.choices_rating.get_mut(&choice_number) {
         *cur_point += point;
       }
-      let old_choice_rating = thread_metadata.choices_rating.get(&choice_number).unwrap_or(&0_u32);
-
-      let new_choice_rating = *old_choice_rating + point;
-
-      thread_metadata.choices_rating.insert(choice_number, new_choice_rating);
 
       self.thread_metadata_by_id.insert(&thread_id, &thread_metadata);
     }
@@ -218,5 +213,19 @@ impl ThreadFeatures for ThreadScoreContract {
     self.user_metadata_by_id.insert(&voter, &new_json_user);
 
     Some("OK".to_string())
+  }
+
+  fn end_thread(&mut self, thread_id: ThreadId) -> Option<String> {
+    // check thread status
+
+    // check is admin
+
+    // calculate which win
+
+    // calc total point
+    
+
+
+    None
   }
 }
