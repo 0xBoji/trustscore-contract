@@ -9,7 +9,8 @@ use near_sdk::{
 
 use super::user::UserId;
 
-/// `ThreadId` is a type alias for `String`, typically representing a unique identifier for a thread in the system.
+/// `ThreadId` is a type alias for `String`, typically representing a unique identifier for a thread
+/// in the system.
 pub type ThreadId = String;
 
 #[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone, PartialEq)]
@@ -23,10 +24,10 @@ pub enum ThreadState {
 #[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone)]
 #[serde(crate = "near_sdk::serde")]
 pub struct ThreadVote {
-  thread_id: ThreadId,
-  choice: u8,
+  thread_id:  ThreadId,
+  choice:     u8,
   created_at: Timestamp,
-  voter: UserId,
+  voter:      UserId,
 }
 /// The `ThreadMetadata` struct represents metadata for a thread in the system.
 #[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone)]

@@ -22,11 +22,11 @@ impl ThreadScoreContract {
     Self::new(
       env::signer_account_id(),
       ThreadScoreContractMetadata {
-        spec: "thread_score-0.0.1".to_string(),
-        name: "thread_score".to_string(),
-        symbol: "TS".to_string(),
-        icon: None,
-        base_uri: None,
+        spec:      "thread_score-0.0.1".to_string(),
+        name:      "thread_score".to_string(),
+        symbol:    "TS".to_string(),
+        icon:      None,
+        base_uri:  None,
         reference: None,
       },
     )

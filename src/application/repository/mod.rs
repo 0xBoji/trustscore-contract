@@ -18,20 +18,20 @@ pub(crate) fn convert_title_to_id_no_account(title: &str) -> String {
   return lowercased.replace(" ", "_");
 }
 
-//used to generate a unique prefix in our storage collections (this is to avoid data collisions)
+// used to generate a unique prefix in our storage collections (this is to avoid data collisions)
 pub(crate) fn hash_account_id(account_id: &AccountId) -> CryptoHash {
-  //get the default hash
+  // get the default hash
   let mut hash = CryptoHash::default();
-  //we hash the account ID and return it
+  // we hash the account ID and return it
   hash.copy_from_slice(&env::sha256(account_id.as_bytes()));
   hash
 }
 
-//used to generate a unique prefix in our storage collections (this is to avoid data collisions)
+// used to generate a unique prefix in our storage collections (this is to avoid data collisions)
 pub(crate) fn hash_space_id(space_id: &SpaceId) -> CryptoHash {
-  //get the default hash
+  // get the default hash
   let mut hash = CryptoHash::default();
-  //we hash the account ID and return it
+  // we hash the account ID and return it
   hash.copy_from_slice(&env::sha256(space_id.as_bytes()));
   hash
 }

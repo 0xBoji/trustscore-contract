@@ -5,7 +5,8 @@ use near_sdk::{
 
 use super::{thread::ThreadId, user::UserId};
 
-/// `SpaceId` is a type alias for `String`, typically representing a unique identifier for a thread in the system.
+/// `SpaceId` is a type alias for `String`, typically representing a unique identifier for a thread
+/// in the system.
 pub type SpaceId = String;
 
 /// The `SpaceMetadata` struct represents metadata for a Space in the system.

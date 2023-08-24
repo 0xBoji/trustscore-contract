@@ -15,7 +15,7 @@ impl SpaceFeatures for ThreadScoreContract {
     let space_id = convert_title_to_id_no_account(&space_name);
 
     let new_space = SpaceMetadata {
-      space_id: space_id.clone(),
+      space_id:   space_id.clone(),
       space_name: space_name.clone(),
       creator_id: env::signer_account_id(),
       created_at: env::block_timestamp_ms(),

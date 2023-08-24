@@ -12,6 +12,9 @@ hard_tabs = false
 # Make one line functions in a single line
 fn_single_line = true
 
+# Set the maximum width for function call wrapping
+fn_call_width = 100
+
 # Format strings
 format_strings = true
 
@@ -20,7 +23,7 @@ max_width = 120
 comment_width = 100
 
 # Merge nested imports
-merge_imports = true
+imports_granularity="Crate"
 
 # Enum and Struct alignement
 enum_discrim_align_threshold = 20
@@ -35,6 +38,6 @@ match_block_trailing_comma = true
 normalize_doc_attributes = true
 error_on_line_overflow = true
 normalize_comments = true
-report_fixme = "Always"
+# report_fixme = "Always"
 wrap_comments = true
-todo = "Always"
+# todo = "Always"

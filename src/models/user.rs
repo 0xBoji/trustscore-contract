@@ -1,12 +1,15 @@
 #![allow(clippy::too_many_arguments)]
 
-use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::serde::{Deserialize, Serialize};
-use near_sdk::AccountId;
+use near_sdk::{
+  borsh::{self, BorshDeserialize, BorshSerialize},
+  serde::{Deserialize, Serialize},
+  AccountId,
+};
 
 use super::thread::ThreadId;
 
-/// `UserId` is a type alias for `AccountId`, typically representing a unique identifier for a user in the system.
+/// `UserId` is a type alias for `AccountId`, typically representing a unique identifier for a user
+/// in the system.
 pub type UserId = AccountId;
 
 #[derive(Default, BorshDeserialize, BorshSerialize, Deserialize, Serialize, Debug, PartialEq)]

@@ -130,7 +130,7 @@ page structure
 - tạo 1 thread mới
 
   ```
-  cm call create_thread '{"title": "thread title 01", "description": "thread desc 01", "media_link":"bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym", "init_point": 90, "space_name": "crypto trading", "start_time": "1692824790000", "end_time": "1695477352000", "options": ["Yes", "No"]}' --account_id gmfam.testnet
+  cm call create_thread '{"title": "thread title 01", "description": "thread desc 01", "media_link":"bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym", "init_point": 90, "space_name": "crypto trading", "start_time": "1692824790000", "end_time": "1695477352000", "options": ["No", "Yes"]}' --account_id gmfam.testnet
   ```
 
   ```
@@ -145,7 +145,7 @@ page structure
     space_name: 'future trading',
     last_id: 0,
     choices_count: 2,
-    choices_map: { '0': 'Yes', '1': 'No' },
+    choices_map: { '0': 'No', '1': 'Yes' },
     user_votes_map: {},
     choices_rating: {},
     start_time: 1692824790000,
@@ -171,7 +171,7 @@ page structure
     space_name: 'future trading',
     last_id: 0,
     choices_count: 2,
-    choices_map: { '0': 'Yes', '1': 'No' },
+    choices_map: { '0': 'No', '1': 'Yes' },
     user_votes_map: {},
     choices_rating: {},
     start_time: 1692824790000,
@@ -209,7 +209,7 @@ page structure
       space_name: 'crypto trading',
       last_id: 0,
       choices_count: 2,
-      choices_map: { '0': 'Yes', '1': 'No' },
+      choices_map: { '0': 'No', '1': 'Yes' },
       user_votes_map: {},
       choices_rating: {},
       start_time: 1692824790000,
@@ -226,7 +226,7 @@ page structure
       space_name: 'future trading',
       last_id: 0,
       choices_count: 2,
-      choices_map: { '0': 'Yes', '1': 'No' },
+      choices_map: { '0': 'No', '1': 'Yes' },
       user_votes_map: {},
       choices_rating: {},
       start_time: 1692824790000,
@@ -300,6 +300,15 @@ page structure
 
   ```
   cm call vote_thread '{"thread_id":"gmfam.testnet_thread_title_01", "choice_number": 0, "point": 50}' --account_id gmfam.testnet
+  ```
+
+  ```
+  OK
+  ```
+- end thread by thread_id
+
+  ```
+  cm call end_thread '{"thread_id":"gmfam.testnet_thread_title_01"}' --account_id gmfam.testnet
   ```
 
   ```

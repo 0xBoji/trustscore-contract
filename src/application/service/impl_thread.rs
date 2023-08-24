@@ -9,8 +9,7 @@ use crate::{
     user::{UserId, UserRoles},
   },
 };
-use near_sdk::{borsh::BorshSerialize, json_types::U64};
-use near_sdk::{collections::UnorderedSet, env, near_bindgen};
+use near_sdk::{borsh::BorshSerialize, collections::UnorderedSet, env, json_types::U64, near_bindgen};
 
 #[near_bindgen]
 impl ThreadFeatures for ThreadScoreContract {
@@ -216,16 +215,105 @@ impl ThreadFeatures for ThreadScoreContract {
   }
 
   fn end_thread(&mut self, thread_id: ThreadId) -> Option<String> {
-    // check thread status
-
     // check is admin
+    let user = env::signer_account_id();
 
-    // calculate which win
+    let user_role = self.user_metadata_by_id.get(&user);
+    // TODO: temp comment, remove comment later
 
-    // calc total point
-    
+    // match user_role {
+    //   Some(json_user) => assert!(json_user.metadata.role == UserRoles::Admin, "Only admin can do this
+    // action!"),   None => assert!(false, "Your account is not created!"),
+    // }
 
+    let thread_metadata_found = self.thread_metadata_by_id.get(&thread_id);
 
-    None
+    match thread_metadata_found {
+      None => assert!(false, "Thread is not existed!"),
+      Some(metadata) => {
+        // check thread status
+        let thread_status = self.get_thread_status(&thread_id);
+        assert!(thread_status != ThreadState::Closed, "This thread is not ended!");
+
+        // calculate which choice win
+        let won_choice = find_max_pair(&metadata.choices_rating);
+        assert!(won_choice.is_some(), "Won choice is not existed!");
+
+        // calculate creator new point
+        let creator = self.user_metadata_by_id.get(&metadata.creator_id);
+
+        match creator {
+          None => assert!(false, "Creator is not existed!"),
+          Some(mut new_json_user) => {
+            // calculate creator point
+            let new_creator_point = match won_choice.unwrap().0 {
+              // 0 ~ No
+              0_u8 => new_json_user.total_point,
+              // 1 ~ Yes
+              1_u8 => new_json_user.total_point + won_choice.unwrap().1.checked_mul(2).unwrap_or(0_u32),
+              // 2 ~ Draw
+              2_u8 => new_json_user.total_point + won_choice.unwrap().1,
+              // _ ~ Other backup cover
+              _ => new_json_user.total_point,
+            };
+
+            new_json_user.total_point = new_creator_point;
+
+            self.user_metadata_by_id.insert(&metadata.creator_id, &new_json_user);
+          },
+        }
+
+        // calc total point rating
+        // let total_choices_rating: u32 = metadata.choices_rating.iter().map(|(_, r)| *r).sum();
+
+        // calculate voter point
+        for (voter_id, (choice, point)) in metadata.user_votes_map {
+          let voter = self.user_metadata_by_id.get(&voter_id);
+
+          match voter {
+            None => assert!(false, "Voter is not existed!"),
+            Some(mut new_json_user) => {
+              let new_point = match choice {
+                // 0 ~ No
+                0_u8 => {
+                  new_json_user.total_point + point
+                    - point
+                      .checked_div(*metadata.choices_rating.get(&0_u8).unwrap())
+                      .unwrap()
+                      .checked_mul(metadata.init_point)
+                      .unwrap()
+                },
+                // 1 ~ Yes
+                1_u8 => {
+                  new_json_user.total_point
+                    + point
+                    + point
+                      .checked_div(*metadata.choices_rating.get(&1_u8).unwrap())
+                      .unwrap()
+                      .checked_mul(metadata.init_point)
+                      .unwrap()
+                },
+                // 2 ~ Draw
+                2_u8 => new_json_user.total_point + point,
+                // _ ~ Other backup cover
+                _ => new_json_user.total_point,
+              };
+
+              new_json_user.total_point = new_point;
+
+              self.user_metadata_by_id.insert(&voter_id, &new_json_user);
+            },
+          }
+        }
+      },
+    }
+
+    // 100
+
+    Some("OK".to_string())
   }
+}
+
+fn find_max_pair(choices_rating: &HashMap<u8, u32>) -> Option<(u8, u32)> {
+  choices_rating.iter().map(|(&choice, &rating)| (choice, rating)).max_by_key(|(_, rating)| *rating)
 }
