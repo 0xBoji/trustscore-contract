@@ -40,7 +40,7 @@ impl UserTraits for ThreadScoreContract {
     let new_json_user = JsonUser {
       user_id: user_id.clone(),
       metadata: new_user_metadata,
-      threads: Vec::new(),
+      threads_list: Vec::new(),
       threads_owned: 0_u32,
       total_point: 1000,
     };

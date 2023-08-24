@@ -62,7 +62,7 @@ pub struct JsonUser {
   pub metadata: UserMetadata,
 
   /// Map of threads associated with the user.
-  pub threads: Vec<ThreadId>,
+  pub threads_list: Vec<ThreadId>,
 
   /// User's total points.
   pub total_point: u32,

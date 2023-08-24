@@ -67,9 +67,8 @@ pub struct ThreadScoreContract {
   /// Map of thread sets by user ID.
   pub threads_per_space: LookupMap<SpaceId, UnorderedSet<ThreadId>>,
 
-  /// Storage all space_id 
+  /// Storage all space_id
   pub space_list: UnorderedSet<SpaceId>,
-
 }
 
 #[derive(BorshSerialize)]

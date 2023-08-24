@@ -1,3 +1,16 @@
+page structure
+
+- /
+  - /spaces
+    - /spaces/forex_trading **#forex_trading**
+      - /thread/thread_001 **thread_001**
+      - /thread/thread_002 **thread_002**
+    - /spaces/crypto_trading **#crypto_trading**
+      - /thread/thread_003 **thread_003**
+      - /thread/thread_004 **thread_004**
+  - /me
+    - /me/create
+
 ### Step to run local
 
 - clean up after update code
@@ -117,26 +130,26 @@
 - tạo 1 thread mới
 
   ```
-  cm call create_thread '{"title": "thread title 01", "description": "thread desc 01", "media_link":"bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym", "init_point": 9000000000000, "space_name": "crypto trading", "start_time": "1692824790000", "end_time": "1695477352000", "options": ["Yes", "No"]}' --account_id gmfam.testnet
+  cm call create_thread '{"title": "thread title 01", "description": "thread desc 01", "media_link":"bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym", "init_point": 90, "space_name": "crypto trading", "start_time": "1692824790000", "end_time": "1695477352000", "options": ["Yes", "No"]}' --account_id gmfam.testnet
   ```
 
   ```
   {
-    thread_id: 'gmfam.testnet_thread_title_01',
-    title: 'thread title 01',
+    thread_id: 'gmfam.testnet_thread_title_02',
+    title: 'thread title 02',
     media_link: 'bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym',
     creator_id: 'gmfam.testnet',
     content: null,
-    created_at: 1692823747727,
-    init_point: 9000000000000,
-    space_name: 'crypto trading',
+    created_at: 1692874267501,
+    init_point: 190,
+    space_name: 'future trading',
     last_id: 0,
     choices_count: 2,
     choices_map: { '0': 'Yes', '1': 'No' },
     user_votes_map: {},
     choices_rating: {},
-    start_time: 1692351435321,
-    end_time: 1692352310056
+    start_time: 1692824790000,
+    end_time: 1695477352000
   }
   ```
 
@@ -148,20 +161,21 @@
 
   ```
   {
-    thread_id: 'gmfam.testnet_thread_title_01',
-    title: 'thread title 01',
+    thread_id: 'gmfam.testnet_thread_title_02',
+    title: 'thread title 02',
     media_link: 'bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym',
     creator_id: 'gmfam.testnet',
     content: null,
-    created_at: 1692737536480,
-    init_point: 9000000000000,
-    space_name: 'crypto trading',
-    users_map: {},
+    created_at: 1692874267501,
+    init_point: 190,
+    space_name: 'future trading',
+    last_id: 0,
     choices_count: 2,
-    choices_map: {},
+    choices_map: { '0': 'Yes', '1': 'No' },
+    user_votes_map: {},
     choices_rating: {},
-    start_time: 1692351435321,
-    end_time: 1692352310056
+    start_time: 1692824790000,
+    end_time: 1695477352000
   }
   ```
 
@@ -190,46 +204,47 @@
       media_link: 'bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym',
       creator_id: 'gmfam.testnet',
       content: null,
-      created_at: 1692737536480,
-      init_point: 9000000000000,
+      created_at: 1692874190923,
+      init_point: 90,
       space_name: 'crypto trading',
-      users_map: {},
+      last_id: 0,
       choices_count: 2,
-      choices_map: {},
+      choices_map: { '0': 'Yes', '1': 'No' },
+      user_votes_map: {},
       choices_rating: {},
-      start_time: 1692351435321,
-      end_time: 1692352310056
+      start_time: 1692824790000,
+      end_time: 1695477352000
     },
     {
-      thread_id: 'gmfam.testnet_thread_title_03',
-      title: 'thread title 03',
+      thread_id: 'gmfam.testnet_thread_title_02',
+      title: 'thread title 02',
       media_link: 'bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym',
       creator_id: 'gmfam.testnet',
       content: null,
-      created_at: 1692739794022,
-      init_point: 22000000000000,
-      space_name: 'trading',
-      users_map: {},
+      created_at: 1692874267501,
+      init_point: 190,
+      space_name: 'future trading',
+      last_id: 0,
       choices_count: 2,
-      choices_map: {},
+      choices_map: { '0': 'Yes', '1': 'No' },
+      user_votes_map: {},
       choices_rating: {},
-      start_time: 1692351435321,
-      end_time: 1692352310056
-    },
-    ...
+      start_time: 1692824790000,
+      end_time: 1695477352000
+    }
   ]
   ```
 
 - get info của 1 space not existed
   ```
-  cm call get_space_metadata_by_thread_id '{"space_id":"crypto"}' --account_id gmfam.testnet
+  cm call get_space_metadata_by_space_id '{"space_id":"crypto"}' --account_id gmfam.testnet
   ```
   ```
   null
   ```
 - get info của 1 space
   ```
-  cm call get_space_metadata_by_thread_id '{"space_id":"crypto_trading"}' --account_id gmfam.testnet
+  cm call get_space_metadata_by_space_id '{"space_id":"crypto_trading"}' --account_id gmfam.testnet
   ```
   ```
   {
@@ -288,7 +303,8 @@
   ```
 
   ```
-  'Closed' // 'Open', 'Upcoming'
+  OK
+  ```
 
 ### Requirements
 

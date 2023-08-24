@@ -2,10 +2,9 @@ use std::collections::HashMap;
 
 use near_sdk::{
   borsh::{self, BorshDeserialize, BorshSerialize},
-
   json_types::U64,
   serde::{Deserialize, Serialize},
-  AccountId, Balance, Timestamp,
+  AccountId, Timestamp,
 };
 
 use super::user::UserId;
@@ -52,7 +51,7 @@ pub struct ThreadMetadata {
   pub created_at: u64,
 
   /// Init point of this thread.
-  pub init_point: Balance,
+  pub init_point: u32,
 
   /// space_name of this thread
   pub space_name: String,
@@ -84,7 +83,7 @@ pub trait ThreadFeatures {
     title: String,
     content: Option<String>,
     media_link: Option<String>,
-    init_point: Balance,
+    init_point: u32,
     space_name: String,
     start_time: U64,
     end_time: U64,
@@ -104,5 +103,5 @@ pub trait ThreadFeatures {
   // /// Check thread status
   fn get_thread_status(&self, thread_id: &ThreadId) -> ThreadState;
 
-  fn vote_thread(&mut self, thread_id: ThreadId, choice: u8, point: u32) -> Option<ThreadVote>;
+  fn vote_thread(&mut self, thread_id: ThreadId, choice: u8, point: u32) -> Option<String>;
 }

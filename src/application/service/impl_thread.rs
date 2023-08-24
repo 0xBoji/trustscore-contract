@@ -5,12 +5,12 @@ use crate::{
   models::{
     contract::{StorageKey, ThreadScoreContract, ThreadScoreContractExt},
     space::SpaceFeatures,
-    thread::{ThreadFeatures, ThreadId, ThreadMetadata, ThreadState, ThreadVote},
+    thread::{ThreadFeatures, ThreadId, ThreadMetadata, ThreadState},
     user::{UserId, UserRoles},
   },
 };
 use near_sdk::{borsh::BorshSerialize, json_types::U64};
-use near_sdk::{collections::UnorderedSet, env, near_bindgen, Balance};
+use near_sdk::{collections::UnorderedSet, env, near_bindgen};
 
 #[near_bindgen]
 impl ThreadFeatures for ThreadScoreContract {
@@ -19,13 +19,12 @@ impl ThreadFeatures for ThreadScoreContract {
     title: String,
     content: Option<String>,
     media_link: Option<String>,
-    init_point: Balance,
+    init_point: u32,
     space_name: String,
     start_time: U64,
     end_time: U64,
     options: Vec<String>,
   ) -> ThreadMetadata {
-    // TODO: check point
     let creator_id = env::signer_account_id();
 
     // check option have at least 2
@@ -40,13 +39,14 @@ impl ThreadFeatures for ThreadScoreContract {
 
     let thread_id = convert_title_to_id(&title, creator_id.to_string());
 
-    let creator_json = self.user_metadata_by_id.get(&creator_id);
+    match self.user_metadata_by_id.get(&creator_id) {
+      Some(creator_json) => {
+        assert!(creator_json.metadata.role == UserRoles::Verified, "Your account is not verified!");
 
-    assert!(creator_json.is_some(), "Your account is not created!");
-
-    let creator_role = creator_json.unwrap().metadata.role;
-
-    assert!(creator_role == UserRoles::Verified, "Your account is not verified!");
+        assert!(creator_json.total_point > init_point, "Your trust point is not enough to create new thread!");
+      },
+      None => assert!(false, "Your account is not created!"),
+    }
 
     assert!(self.thread_metadata_by_id.get(&thread_id).is_none(), "This thread already created!");
 
@@ -110,6 +110,8 @@ impl ThreadFeatures for ThreadScoreContract {
 
     let mut new_json_creator = self.user_metadata_by_id.get(&creator_id).unwrap();
     new_json_creator.threads_owned += 1;
+    new_json_creator.total_point -= init_point;
+    new_json_creator.threads_list.push(thread_id);
 
     self.user_metadata_by_id.insert(&creator_id, &new_json_creator);
 
@@ -161,7 +163,7 @@ impl ThreadFeatures for ThreadScoreContract {
     return ThreadState::Upcoming;
   }
 
-  fn vote_thread(&mut self, thread_id: ThreadId, choice_number: u8, point: u32) -> Option<ThreadVote> {
+  fn vote_thread(&mut self, thread_id: ThreadId, choice_number: u8, point: u32) -> Option<String> {
     let voter = env::signer_account_id();
 
     assert!(point > 10, "Your point must be greater than 10!");
@@ -215,6 +217,6 @@ impl ThreadFeatures for ThreadScoreContract {
 
     self.user_metadata_by_id.insert(&voter, &new_json_user);
 
-    None
+    Some("OK".to_string())
   }
 }
