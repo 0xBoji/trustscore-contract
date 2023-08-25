@@ -67,11 +67,17 @@ pub struct JsonUser {
   /// Map of threads associated with the user.
   pub threads_list: Vec<ThreadId>,
 
+  /// Map of fraud threads associated with the user.
+  pub fraud_list: Vec<ThreadId>,
+
   /// User's total points.
-  pub total_point: u32,
+  pub total_point: i32,
 
   /// Total number of threads owned by the user.
   pub threads_owned: u32,
+
+  /// Total number of fraud threads owned by the user.
+  pub fraud_threads_owned: u32,
 }
 
 /// The `UserTraits` trait defines a set of behaviors associated with a user in the system.

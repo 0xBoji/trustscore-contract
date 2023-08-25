@@ -43,6 +43,9 @@ impl UserTraits for ThreadScoreContract {
       threads_list:  Vec::new(),
       threads_owned: 0_u32,
       total_point:   1000,
+      fraud_list:  Vec::new(),
+      fraud_threads_owned: 0_u32,
+
     };
 
     self.user_metadata_by_id.insert(&user_id, &new_json_user);

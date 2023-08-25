@@ -24,10 +24,10 @@ pub enum ThreadState {
 #[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone)]
 #[serde(crate = "near_sdk::serde")]
 pub struct ThreadVote {
-  thread_id:  ThreadId,
-  choice:     u8,
+  thread_id: ThreadId,
+  choice: u8,
   created_at: Timestamp,
-  voter:      UserId,
+  voter: UserId,
 }
 /// The `ThreadMetadata` struct represents metadata for a thread in the system.
 #[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone)]
@@ -42,8 +42,14 @@ pub struct ThreadMetadata {
   /// media_link of the thread
   pub media_link: Option<String>,
 
+  /// Mode of thread. 0 -> fraud, 1 -> simple
+  pub thread_mode: u8,
+
   /// Creator's account ID.
   pub creator_id: UserId,
+
+  /// Partner's account ID.
+  pub partner_id: UserId,
 
   /// The Content of this thread
   pub content: Option<String>,
@@ -85,6 +91,8 @@ pub trait ThreadFeatures {
     content: Option<String>,
     media_link: Option<String>,
     init_point: u32,
+    partner_id: AccountId,
+    thread_mode: u8,
     space_name: String,
     start_time: U64,
     end_time: U64,

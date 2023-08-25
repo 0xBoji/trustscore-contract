@@ -9,7 +9,7 @@ use crate::{
     user::{UserId, UserRoles},
   },
 };
-use near_sdk::{borsh::BorshSerialize, collections::UnorderedSet, env, json_types::U64, near_bindgen};
+use near_sdk::{borsh::BorshSerialize, collections::UnorderedSet, env, json_types::U64, near_bindgen, AccountId};
 
 #[near_bindgen]
 impl ThreadFeatures for ThreadScoreContract {
@@ -19,6 +19,8 @@ impl ThreadFeatures for ThreadScoreContract {
     content: Option<String>,
     media_link: Option<String>,
     init_point: u32,
+    partner_id: AccountId,
+    thread_mode: u8,
     space_name: String,
     start_time: U64,
     end_time: U64,
@@ -26,9 +28,11 @@ impl ThreadFeatures for ThreadScoreContract {
   ) -> ThreadMetadata {
     let creator_id = env::signer_account_id();
 
-    // check option have at least 2
-    assert!(options.len() > 1, "Vote option must be greater than 2!");
-    assert!(options.len() < 4, "Vote option must be less than 4!");
+    // check option have 2
+    assert!(options.len() == 2, "Vote option must be 2!");
+
+    // check thread_mode
+    assert!(thread_mode == 0_u8 || thread_mode == 1_u8, "Thread mode is not valid!");
 
     let mut choices_map = HashMap::<u8, String>::new();
 
@@ -36,16 +40,26 @@ impl ThreadFeatures for ThreadScoreContract {
       choices_map.insert(idx as u8, option.to_owned());
     });
 
-    let thread_id = convert_title_to_id(&title, creator_id.to_string());
-
+    // check user
     match self.user_metadata_by_id.get(&creator_id) {
       Some(creator_json) => {
         assert!(creator_json.metadata.role == UserRoles::Verified, "Your account is not verified!");
 
-        assert!(creator_json.total_point > init_point, "Your trust point is not enough to create new thread!");
+        assert!(creator_json.total_point > init_point as i32, "Your trust point is not enough to create new thread!");
       },
       None => assert!(false, "Your account is not created!"),
     }
+
+    // check partner
+    match self.user_metadata_by_id.get(&partner_id) {
+      None => assert!(false, "Partner account is not valid!"),
+      Some(partner_json) => {
+        assert!(partner_json.user_id == creator_id, "Partner ID can not same as your account!");
+      },
+    }
+
+    // check thread
+    let thread_id = convert_title_to_id(&title, creator_id.to_string());
 
     assert!(self.thread_metadata_by_id.get(&thread_id).is_none(), "This thread already created!");
 
@@ -54,8 +68,9 @@ impl ThreadFeatures for ThreadScoreContract {
       title,
       media_link,
       creator_id: creator_id.clone(),
-      content,
+      partner_id: partner_id.clone(),      content,
       init_point,
+      thread_mode,
       space_name: space_name.clone(),
       start_time: start_time.into(),
       end_time: end_time.into(),
@@ -67,6 +82,7 @@ impl ThreadFeatures for ThreadScoreContract {
       last_id: 0_u32,
     };
 
+    // update thread
     let init_new_user_threads_list: UnorderedSet<String> = UnorderedSet::new(
       StorageKey::ThreadsPerUserInner { account_id_hash: hash_account_id(&creator_id) }.try_to_vec().unwrap(),
     );
@@ -83,6 +99,7 @@ impl ThreadFeatures for ThreadScoreContract {
 
     self.thread_metadata_by_id.insert(&thread_id, &thread_meta);
 
+    // update space
     let space_id = convert_title_to_id_no_account(&space_name);
     let is_space_id_exists = self.space_metadata_by_id.contains_key(&space_id);
 
@@ -107,12 +124,30 @@ impl ThreadFeatures for ThreadScoreContract {
     // update Total number of threads owned by the user.
     self.user_metadata_by_id.get(&creator_id);
 
+    // update creator
     let mut new_json_creator = self.user_metadata_by_id.get(&creator_id).unwrap();
     new_json_creator.threads_owned += 1;
-    new_json_creator.total_point -= init_point;
-    new_json_creator.threads_list.push(thread_id);
+    // new_json_creator.total_point -= init_point;
+    new_json_creator.total_point = new_json_creator
+      .total_point
+      .checked_sub_unsigned(init_point)
+      .ok_or(assert!(false, "Overflow creator point!"))
+      .unwrap();
+    new_json_creator.threads_list.push(thread_id.clone());
 
     self.user_metadata_by_id.insert(&creator_id, &new_json_creator);
+
+    // update partner
+    let mut new_json_partner = self.user_metadata_by_id.get(&creator_id).unwrap();
+    new_json_partner.fraud_threads_owned += 1;
+    new_json_partner.total_point = new_json_partner
+      .total_point
+      .checked_sub_unsigned(init_point)
+      .ok_or(assert!(false, "Overflow partner point!"))
+      .unwrap();
+    new_json_partner.fraud_list.push(thread_id);
+
+    self.user_metadata_by_id.insert(&partner_id, &new_json_partner);
 
     thread_meta
   }
@@ -172,7 +207,7 @@ impl ThreadFeatures for ThreadScoreContract {
     assert!(found_voter.is_some(), "This user is not existed!");
 
     if let Some(json_user) = &found_voter {
-      assert!(json_user.total_point > point, "You don't have enough point!");
+      assert!(json_user.total_point > point as i32, "You don't have enough point!");
     }
 
     // check thread id valid
@@ -180,13 +215,14 @@ impl ThreadFeatures for ThreadScoreContract {
     assert!(thread_found.is_some(), "Thread is not existed!");
 
     // check time is valid
-
     let cur_thread_state = self.get_thread_status(&thread_id);
     assert!(cur_thread_state != ThreadState::Upcoming, "This thread is not live yet!");
     assert!(cur_thread_state != ThreadState::Closed, "This thread is ended!");
 
     // check choice is valid
     if let Some(mut thread_metadata) = thread_found {
+      assert!(thread_metadata.creator_id == voter, "Thread creator can not vote!");
+      assert!(thread_metadata.partner_id == voter, "Thread partner can not vote!");
       assert!(thread_metadata.choices_map.get(&choice_number).is_some(), "Your choice is not valid!");
 
       // update user_votes_map
@@ -207,7 +243,9 @@ impl ThreadFeatures for ThreadScoreContract {
     // update new point for user
     let mut new_json_user = found_voter.unwrap();
 
-    new_json_user.total_point -= point;
+    // new_json_user.total_point -= point;
+    new_json_user.total_point =
+      new_json_user.total_point.checked_sub_unsigned(point).ok_or(assert!(false, "Overflow user point!")).unwrap();
 
     self.user_metadata_by_id.insert(&voter, &new_json_user);
 
@@ -216,14 +254,18 @@ impl ThreadFeatures for ThreadScoreContract {
 
   fn end_thread(&mut self, thread_id: ThreadId) -> Option<String> {
     // check is admin
-    let user = env::signer_account_id();
+    // let user = env::signer_account_id();
 
-    let user_role = self.user_metadata_by_id.get(&user);
+    // let user_role = self.user_metadata_by_id.get(&user);
+
     // TODO: temp comment, remove comment later
-
     // match user_role {
-    //   Some(json_user) => assert!(json_user.metadata.role == UserRoles::Admin, "Only admin can do this
-    // action!"),   None => assert!(false, "Your account is not created!"),
+    //   Some(json_user) => assert!(
+    //     json_user.metadata.role == UserRoles::Admin,
+    //     "Only admin can do this
+    // action!"
+    //   ),
+    //   None => assert!(false, "Your account is not created!"),
     // }
 
     let thread_metadata_found = self.thread_metadata_by_id.get(&thread_id);
@@ -245,21 +287,44 @@ impl ThreadFeatures for ThreadScoreContract {
         match creator {
           None => assert!(false, "Creator is not existed!"),
           Some(mut new_json_user) => {
+            // calculate creator point * partner point
+            // Mode of thread. 0 -> fraud
+            if metadata.thread_mode == 0 {
+              match won_choice.unwrap().0 {
+                // 0 ~ creator
+                0_u8 => {
+                  new_json_user.total_point =
+                    new_json_user.total_point + metadata.init_point.checked_mul(2).unwrap_or(0_u32) as i32;
+
+                    self.user_metadata_by_id.insert(&metadata.creator_id, &new_json_user);
+                  },
+                  // 1 ~ partner
+                  1_u8 => {
+                    let mut partner_metadata = self.user_metadata_by_id.get(&metadata.partner_id).unwrap();
+
+                    partner_metadata.total_point =
+                    partner_metadata.total_point + metadata.init_point.checked_mul(2).unwrap_or(0_u32) as i32;
+                    self.user_metadata_by_id.insert(&metadata.partner_id, &partner_metadata);
+                },
+                _ => (),
+              };
+            }
+
             // calculate creator point
-            let new_creator_point = match won_choice.unwrap().0 {
-              // 0 ~ No
-              0_u8 => new_json_user.total_point,
-              // 1 ~ Yes
-              1_u8 => new_json_user.total_point + won_choice.unwrap().1.checked_mul(2).unwrap_or(0_u32),
-              // 2 ~ Draw
-              2_u8 => new_json_user.total_point + won_choice.unwrap().1,
-              // _ ~ Other backup cover
-              _ => new_json_user.total_point,
-            };
+            // Mode of thread. 1 -> simple
+            if metadata.thread_mode == 1 {
+              let new_creator_point = match won_choice.unwrap().0 {
+                // 0 ~ No
+                0_u8 => new_json_user.total_point,
+                // 1 ~ Yes
+                1_u8 => new_json_user.total_point + metadata.init_point.checked_mul(2).unwrap_or(0_u32) as i32,
+                _ => new_json_user.total_point,
+              };
 
-            new_json_user.total_point = new_creator_point;
+              new_json_user.total_point = new_creator_point;
 
-            self.user_metadata_by_id.insert(&metadata.creator_id, &new_json_user);
+              self.user_metadata_by_id.insert(&metadata.creator_id, &new_json_user);
+            }
           },
         }
 
@@ -276,25 +341,25 @@ impl ThreadFeatures for ThreadScoreContract {
               let new_point = match choice {
                 // 0 ~ No
                 0_u8 => {
-                  new_json_user.total_point + point
+                  new_json_user.total_point + point as i32
                     - point
                       .checked_div(*metadata.choices_rating.get(&0_u8).unwrap())
                       .unwrap()
                       .checked_mul(metadata.init_point)
-                      .unwrap()
+                      .unwrap() as i32
                 },
                 // 1 ~ Yes
                 1_u8 => {
                   new_json_user.total_point
-                    + point
+                    + point as i32
                     + point
                       .checked_div(*metadata.choices_rating.get(&1_u8).unwrap())
                       .unwrap()
                       .checked_mul(metadata.init_point)
-                      .unwrap()
+                      .unwrap() as i32
                 },
                 // 2 ~ Draw
-                2_u8 => new_json_user.total_point + point,
+                2_u8 => new_json_user.total_point + point as i32,
                 // _ ~ Other backup cover
                 _ => new_json_user.total_point,
               };
