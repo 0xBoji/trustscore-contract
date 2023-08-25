@@ -1,7 +1,7 @@
 use near_sdk::{env, near_bindgen};
 
 use crate::{
-  application::repository::convert_title_to_id_no_account,
+  application::service::convert_title_to_id_no_account,
   models::{
     contract::{ThreadScoreContract, ThreadScoreContractExt},
     space::{SpaceFeatures, SpaceId, SpaceMetadata},

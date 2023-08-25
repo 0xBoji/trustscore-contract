@@ -1,7 +1,7 @@
 use std::{collections::HashMap, u8};
 
 use crate::{
-  application::repository::{convert_title_to_id, convert_title_to_id_no_account, hash_account_id, hash_space_id},
+  application::service::{convert_title_to_id, convert_title_to_id_no_account, hash_account_id, hash_space_id},
   models::{
     contract::{StorageKey, ThreadScoreContract, ThreadScoreContractExt},
     space::SpaceFeatures,
