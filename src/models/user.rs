@@ -117,4 +117,7 @@ pub trait UserTraits {
 
   /// Check user role
   fn active_user_role(&mut self, user_id: UserId) -> Option<JsonUser>;
+
+  /// Set admin role
+  fn set_admin_user_role(&mut self, user_id: UserId) -> Option<JsonUser>;
 }

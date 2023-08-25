@@ -38,14 +38,13 @@ impl UserTraits for ThreadScoreContract {
     };
 
     let new_json_user = JsonUser {
-      user_id:       user_id.clone(),
-      metadata:      new_user_metadata,
-      threads_list:  Vec::new(),
+      user_id: user_id.clone(),
+      metadata: new_user_metadata,
+      threads_list: Vec::new(),
       threads_owned: 0_u32,
-      total_point:   1000,
-      fraud_list:  Vec::new(),
+      total_point: 1000,
+      fraud_list: Vec::new(),
       fraud_threads_owned: 0_u32,
-
     };
 
     self.user_metadata_by_id.insert(&user_id, &new_json_user);
@@ -126,12 +125,43 @@ impl UserTraits for ThreadScoreContract {
 
   /// Check user role
   fn active_user_role(&mut self, user_id: UserId) -> Option<JsonUser> {
+    // // check is admin
+    // let user = env::signer_account_id();
+
+    // let user_role = self.user_metadata_by_id.get(&user);
+
+    // // TODO: temp comment, remove comment later
+    // match user_role {
+    //   Some(json_user) => assert!(
+    //     json_user.metadata.role == UserRoles::Admin,
+    //     "Only admin can do this action!"
+    //   ),
+    //   None => assert!(false, "Your account is not created!"),
+    // }
+
     // check exit
     let mut found_user = self.user_metadata_by_id.get(&user_id).unwrap();
 
     // TODO: validate ADMIN role
 
     found_user.metadata.role = UserRoles::Verified;
+    self.user_metadata_by_id.insert(&user_id, &found_user);
+
+    Some(found_user)
+  }
+
+  /// Set admin role
+  fn set_admin_user_role(&mut self, user_id: UserId) -> Option<JsonUser> {
+    // check is owner
+    let caller = env::signer_account_id();
+    let owner = self.get_owner_id();
+
+    assert!(caller == owner, "Only owner can do this action!");
+
+    // check exit
+    let mut found_user = self.user_metadata_by_id.get(&user_id).unwrap();
+
+    found_user.metadata.role = UserRoles::Admin;
     self.user_metadata_by_id.insert(&user_id, &found_user);
 
     Some(found_user)

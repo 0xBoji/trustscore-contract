@@ -56,14 +56,13 @@ page structure
   cm call --account_id gmfam.testnet get_owner_id
   ```
   ```
-  dev-1691914103143-32544821462759
+  dev-1693000504580-67464128643370
   ```
 - get array danh sách id all user (sau khi đã đăng ký vào TS)
 
   ```
   cm call --account_id gmfam.testnet get_subscriber_users
   ```
-
   ```
   []
   ```
@@ -73,10 +72,17 @@ page structure
   cm call create_user '{"nickname":"longn","first_name":"Ân","last_name":"Nguyễn Văn", "bio":"this is my bio" ,"avatar":"bafkreibnaelo4monu6jpndqtb3pmza22j7k77gcak3xrux6mrkdq5fakuu"}' --account_id gmfam.testnet
   ```
   ```
-  ' '
+  ''
+  ```
+- get array danh sách id all user (sau khi đã đăng ký vào TS)
+
+  ```
+  cm call --account_id gmfam.testnet get_subscriber_users
+  ```
+  ```
+  [ 'gmfam.testnet' ]
   ```
 - get info của 1 user by user_id
-
   ```
   cm call get_user_metadata_by_user_id '{"user_id":"gmfam.testnet"}' --account_id gmfam.testnet
   ```
@@ -87,17 +93,19 @@ page structure
     metadata: {
       user_id: 'gmfam.testnet',
       nickname: 'longn',
-      role: 'Verified',
+      role: 'Unverified',
       first_name: 'Ân',
       last_name: 'Nguyễn Văn',
       bio: 'this is my bio',
       avatar: 'bafkreibnaelo4monu6jpndqtb3pmza22j7k77gcak3xrux6mrkdq5fakuu',
-      created_at: 1692823540083,
-      updated_at: 1692823540083
+      created_at: 1693000706705,
+      updated_at: 1693000706705
     },
-    threads: [],
+    threads_list: [],
+    fraud_list: [],
     total_point: 1000,
-    threads_owned: 0
+    threads_owned: 0,
+    fraud_threads_owned: 0
   }
   ```
 
@@ -127,22 +135,73 @@ page structure
   }
   ```
 
-- tạo 1 thread mới
+- tạo 1 thread mới. mode 0 fraud
 
   ```
-  cm call create_thread '{"title": "thread title 01", "description": "thread desc 01", "media_link":"bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym", "init_point": 90, "space_name": "crypto trading", "start_time": "1692824790000", "end_time": "1695477352000", "options": ["No", "Yes"]}' --account_id gmfam.testnet
+  cm call create_thread '{"title": "thread title 01 fraud mode", "description": "thread desc 01 fraud mode", "media_link":"bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym", "init_point": 90, "space_name": "crypto trading", "start_time": "1692824790000", "end_time": "1695477352000", "options": ["gmfam.testnet", "long6789.testnet"], "partner_id":"long6789.testnet", "thread_mode": 0} ' --account_id gmfam.testnet
   ```
 
   ```
   {
-    thread_id: 'gmfam.testnet_thread_title_02',
-    title: 'thread title 02',
+    thread_id: 'gmfam.testnet_thread_title_01_fraud_mode',
+    title: 'thread title 01 fraud mode',
     media_link: 'bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym',
+    thread_mode: 0,
     creator_id: 'gmfam.testnet',
+    partner_id: 'long6789.testnet',
     content: null,
-    created_at: 1692874267501,
-    init_point: 190,
-    space_name: 'future trading',
+    created_at: 1693003446366,
+    init_point: 90,
+    space_name: 'crypto trading',
+    last_id: 0,
+    choices_count: 2,
+    choices_map: { '0': 'gmfam.testnet', '1': 'long6789.testnet' },
+    user_votes_map: {},
+    choices_rating: {},
+    start_time: 1692824790000,
+    end_time: 1695477352000
+  }
+
+  // user creator updated
+  {
+    user_id: 'gmfam.testnet',
+    ...
+    threads_list: [ 'gmfam.testnet_thread_title_01_fraud_mode' ],
+    fraud_list: [],
+    total_point: 910,
+    threads_owned: 1,
+    fraud_threads_owned: 0
+  }
+
+  // user fraud updated
+  {
+    user_id: 'long6789.testnet',
+    ...
+    threads_list: [],
+    fraud_list: [ 'gmfam.testnet_thread_title_01_fraud_mode' ],
+    total_point: 910,
+    threads_owned: 0,
+    fraud_threads_owned: 1
+  }
+  ```
+- tạo 1 thread mới. mode 1 simple
+
+  ```
+  cm call create_thread '{"title": "thread title 02 simple mode", "description": "thread desc 02 simple mode", "media_link":"bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym", "init_point": 200, "space_name": "crypto trading", "start_time": "1692824790000", "end_time": "1695477352000", "options": ["No", "Yes"], "thread_mode": 1} ' --account_id gmfam.testnet
+  ```
+
+  ```
+  {
+    thread_id: 'gmfam.testnet_thread_title_02_simple_mode',
+    title: 'thread title 02 simple mode',
+    media_link: 'bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym',
+    thread_mode: 1,
+    creator_id: 'gmfam.testnet',
+    partner_id: null,
+    content: null,
+    created_at: 1693005707584,
+    init_point: 200,
+    space_name: 'crypto trading',
     last_id: 0,
     choices_count: 2,
     choices_map: { '0': 'No', '1': 'Yes' },
@@ -150,6 +209,20 @@ page structure
     choices_rating: {},
     start_time: 1692824790000,
     end_time: 1695477352000
+  }
+
+  // creator after updated
+  {
+    user_id: 'gmfam.testnet',
+    ...
+    threads_list: [
+      'gmfam.testnet_thread_title_01_fraud_mode',
+      'gmfam.testnet_thread_title_02_simple_mode'
+    ],
+    fraud_list: [],
+    total_point: 710,
+    threads_owned: 2,
+    fraud_threads_owned: 0
   }
   ```
 

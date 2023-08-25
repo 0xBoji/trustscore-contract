@@ -49,7 +49,7 @@ pub struct ThreadMetadata {
   pub creator_id: UserId,
 
   /// Partner's account ID.
-  pub partner_id: UserId,
+  pub partner_id: Option<UserId>,
 
   /// The Content of this thread
   pub content: Option<String>,
@@ -91,7 +91,7 @@ pub trait ThreadFeatures {
     content: Option<String>,
     media_link: Option<String>,
     init_point: u32,
-    partner_id: AccountId,
+    partner_id: Option<AccountId>,
     thread_mode: u8,
     space_name: String,
     start_time: U64,
