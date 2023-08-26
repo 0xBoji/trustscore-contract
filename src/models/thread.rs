@@ -63,6 +63,9 @@ pub struct ThreadMetadata {
   /// space_name of this thread
   pub space_name: String,
 
+  /// space_name of this thread
+  pub space_id: String,
+
   // /// Number of user currently subscribed this thread.
   // pub users_map: UnorderedSet<UserId>,
   pub last_id: u32,

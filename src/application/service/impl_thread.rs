@@ -80,6 +80,7 @@ impl ThreadFeatures for ThreadScoreContract {
       init_point,
       thread_mode,
       space_name: space_name.clone(),
+      space_id: convert_title_to_id_no_account(&space_name),
       start_time: start_time.into(),
       end_time: end_time.into(),
       created_at: env::block_timestamp_ms(),

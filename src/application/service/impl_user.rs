@@ -124,13 +124,14 @@ impl UserTraits for ThreadScoreContract {
   }
 
   /// Check user role
-  fn active_user_role(&mut self, user_id: UserId) -> Option<JsonUser> {
+  fn active_user_role(&mut self, user_id: UserId) -> Option<String> {
     // // check is admin
     // let user = env::signer_account_id();
 
     // let user_role = self.user_metadata_by_id.get(&user);
 
     // // TODO: temp comment, remove comment later
+    // validate ADMIN role
     // match user_role {
     //   Some(json_user) => assert!(
     //     json_user.metadata.role == UserRoles::Admin,
@@ -140,18 +141,19 @@ impl UserTraits for ThreadScoreContract {
     // }
 
     // check exit
-    let mut found_user = self.user_metadata_by_id.get(&user_id).unwrap();
+    match self.user_metadata_by_id.get(&user_id) {
+      None => assert!(false, "User Id is not created yet!"),
+      Some(mut user) => {
+        user.metadata.role = UserRoles::Verified;
+        self.user_metadata_by_id.insert(&user_id, &user);
+      },
+    }
 
-    // TODO: validate ADMIN role
-
-    found_user.metadata.role = UserRoles::Verified;
-    self.user_metadata_by_id.insert(&user_id, &found_user);
-
-    Some(found_user)
+    Some(String::from("OK"))
   }
 
   /// Set admin role
-  fn set_admin_user_role(&mut self, user_id: UserId) -> Option<JsonUser> {
+  fn set_admin_user_role(&mut self, user_id: UserId) -> Option<String> {
     // check is owner
     let caller = env::signer_account_id();
     let owner = self.get_owner_id();
@@ -159,11 +161,14 @@ impl UserTraits for ThreadScoreContract {
     assert!(caller == owner, "Only owner can do this action!");
 
     // check exit
-    let mut found_user = self.user_metadata_by_id.get(&user_id).unwrap();
+    match self.user_metadata_by_id.get(&user_id) {
+      None => assert!(false, "User Id is not created yet!"),
+      Some(mut user) => {
+        user.metadata.role = UserRoles::Admin;
+        self.user_metadata_by_id.insert(&user_id, &user);
+      },
+    }
 
-    found_user.metadata.role = UserRoles::Admin;
-    self.user_metadata_by_id.insert(&user_id, &found_user);
-
-    Some(found_user)
+    Some(String::from("OK"))
   }
 }
