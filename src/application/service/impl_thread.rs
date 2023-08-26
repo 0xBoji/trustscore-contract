@@ -142,12 +142,20 @@ impl ThreadFeatures for ThreadScoreContract {
     self.user_metadata_by_id.insert(&creator_id, &new_json_creator);
     if thread_mode == 0 {
       // update partner
-      let mut new_json_partner = self.user_metadata_by_id.get(&partner_id.clone().unwrap()).unwrap();
-      new_json_partner.fraud_threads_owned += 1;
-      new_json_partner.total_point = new_json_partner.total_point.checked_sub_unsigned(init_point).unwrap();
-      new_json_partner.fraud_list.push(thread_id);
 
-      self.user_metadata_by_id.insert(&partner_id.unwrap(), &new_json_partner);
+      match partner_id.clone() {
+        Some(id) => match self.user_metadata_by_id.get(&id) {
+          None => assert!(false, "Partner user is not valid!"),
+          Some(mut new_json_partner) => {
+            new_json_partner.fraud_threads_owned += 1;
+            new_json_partner.total_point = new_json_partner.total_point.checked_sub_unsigned(init_point).unwrap();
+            new_json_partner.fraud_list.push(thread_id);
+
+            self.user_metadata_by_id.insert(&partner_id.unwrap(), &new_json_partner);
+          },
+        },
+        None => assert!(false, "Partner id is not valid!"),
+      };
     }
 
     thread_meta
@@ -245,8 +253,7 @@ impl ThreadFeatures for ThreadScoreContract {
     let mut new_json_user = found_voter.unwrap();
 
     // new_json_user.total_point -= point;
-    new_json_user.total_point =
-      new_json_user.total_point.checked_sub_unsigned(point).ok_or(assert!(false, "Overflow user point!")).unwrap();
+    new_json_user.total_point = new_json_user.total_point.checked_sub_unsigned(point).unwrap();
 
     self.user_metadata_by_id.insert(&voter, &new_json_user);
 

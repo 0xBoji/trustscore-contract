@@ -63,6 +63,7 @@ page structure
   ```
   cm call --account_id gmfam.testnet get_subscriber_users
   ```
+
   ```
   []
   ```
@@ -79,10 +80,13 @@ page structure
   ```
   cm call --account_id gmfam.testnet get_subscriber_users
   ```
+
   ```
   [ 'gmfam.testnet' ]
   ```
+
 - get info của 1 user by user_id
+
   ```
   cm call get_user_metadata_by_user_id '{"user_id":"gmfam.testnet"}' --account_id gmfam.testnet
   ```
@@ -184,6 +188,7 @@ page structure
     fraud_threads_owned: 1
   }
   ```
+
 - tạo 1 thread mới. mode 1 simple
 
   ```
@@ -229,7 +234,7 @@ page structure
 - lấy info của 1 thread by thread_id
 
   ```
-  cm call get_thread_metadata_by_thread_id '{"thread_id":"gmfam.testnet_thread_title_01"}' --account_id gmfam.testnet
+  cm call get_thread_metadata_by_thread_id '{"thread_id":"gmfam.testnet_thread_title_01_fraud_mode"}' --account_id gmfam.testnet
   ```
 
   ```
@@ -255,7 +260,7 @@ page structure
 - lấy status của 1 thread by thread_id
 
   ```
-  cm call get_thread_status '{"thread_id":"gmfam.testnet_thread_title_01"}' --account_id gmfam.testnet
+  cm call get_thread_status '{"thread_id":"gmfam.testnet_thread_title_01_fraud_mode"}' --account_id gmfam.testnet
   ```
 
   ```
@@ -272,7 +277,7 @@ page structure
   ```
   [
     {
-      thread_id: 'gmfam.testnet_thread_title_01',
+      thread_id: 'gmfam.testnet_thread_title_01_fraud_mode',
       title: 'thread title 01',
       media_link: 'bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym',
       creator_id: 'gmfam.testnet',
@@ -334,7 +339,7 @@ page structure
   ```
 
   ```
-  [ 'gmfam.testnet_thread_title_01', 'gmfam.testnet_thread_title_02' ]
+  [ 'gmfam.testnet_thread_title_01_fraud_mode', 'gmfam.testnet_thread_title_02' ]
 
   ```
 
@@ -372,16 +377,18 @@ page structure
 - vote thread by thread_id
 
   ```
-  cm call vote_thread '{"thread_id":"gmfam.testnet_thread_title_01", "choice_number": 0, "point": 50}' --account_id gmfam.testnet
+  cm call vote_thread '{"thread_id":"gmfam.testnet_thread_title_01_fraud_mode", "choice_number": 0, "point": 50}' --account_id gmfam.testnet
+  cm call vote_thread '{"thread_id":"gmfam.testnet_thread_title_02_simple_mode", "choice_number": 1, "point": 150}' --account_id gmfam.testnet
   ```
 
   ```
   OK
   ```
+
 - end thread by thread_id
 
   ```
-  cm call end_thread '{"thread_id":"gmfam.testnet_thread_title_01"}' --account_id gmfam.testnet
+  cm call end_thread '{"thread_id":"gmfam.testnet_thread_title_01_fraud_mode"}' --account_id gmfam.testnet
   ```
 
   ```
