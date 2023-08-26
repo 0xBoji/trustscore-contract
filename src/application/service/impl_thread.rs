@@ -233,8 +233,8 @@ impl ThreadFeatures for ThreadScoreContract {
         "Your point must be greater than thread init_point! {}",
         thread_metadata.init_point
       );
-      assert!(thread_metadata.creator_id == voter, "Thread creator can not vote!");
-      assert!(thread_metadata.partner_id.clone().unwrap() == voter, "Thread partner can not vote!");
+      assert!(thread_metadata.creator_id != voter, "Thread creator can not vote!");
+      assert!(thread_metadata.partner_id.clone().unwrap() != voter, "Thread partner can not vote!");
       assert!(thread_metadata.choices_map.get(&choice_number).is_some(), "Your choice is not valid!");
 
       // update user_votes_map
@@ -245,9 +245,15 @@ impl ThreadFeatures for ThreadScoreContract {
       thread_metadata.user_votes_map.insert(voter.clone(), (choice_number, point));
 
       // update choices_rating
-      if let Some(cur_point) = thread_metadata.choices_rating.get_mut(&choice_number) {
-        *cur_point += point;
-      }
+      // if let Some(cur_point) = thread_metadata.choices_rating.get_mut(&choice_number) {
+      //   *cur_point += point;
+      // }
+
+      // update choices_rating
+      let current_user_choice_rating = thread_metadata.choices_rating.get(&choice_number).unwrap_or(&0_u32);
+      let new_user_choice_rating = current_user_choice_rating.checked_add(point).unwrap();
+
+      thread_metadata.choices_rating.insert(choice_number, new_user_choice_rating);
 
       self.thread_metadata_by_id.insert(&thread_id, &thread_metadata);
     }
