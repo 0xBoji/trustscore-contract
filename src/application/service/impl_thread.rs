@@ -209,8 +209,6 @@ impl ThreadFeatures for ThreadScoreContract {
   fn vote_thread(&mut self, thread_id: ThreadId, choice_number: u8, point: u32) -> Option<String> {
     let voter = env::signer_account_id();
 
-    assert!(point > 10, "Your point must be greater than 10!");
-
     // check point of user > initial point
     let found_voter = self.user_metadata_by_id.get(&voter);
     assert!(found_voter.is_some(), "This user is not existed!");
@@ -230,6 +228,11 @@ impl ThreadFeatures for ThreadScoreContract {
 
     // check choice is valid
     if let Some(mut thread_metadata) = thread_found {
+      assert!(
+        point >= thread_metadata.init_point,
+        "Your point must be greater than thread init_point! {}",
+        thread_metadata.init_point
+      );
       assert!(thread_metadata.creator_id == voter, "Thread creator can not vote!");
       assert!(thread_metadata.partner_id.clone().unwrap() == voter, "Thread partner can not vote!");
       assert!(thread_metadata.choices_map.get(&choice_number).is_some(), "Your choice is not valid!");
