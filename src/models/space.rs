@@ -27,6 +27,9 @@ pub struct SpaceMetadata {
 
   // List of user follow this Space
   pub followed_users: Vec<UserId>,
+
+  // Total point of this space
+  pub total_point : u64
 }
 
 pub trait SpaceFeatures {

@@ -157,6 +157,27 @@ impl ThreadFeatures for ThreadScoreContract {
         },
         None => assert!(false, "Partner id is not valid!"),
       };
+
+      // update new point for space
+      let new_space_metadata = self.space_metadata_by_id.get(&space_id);
+
+      match new_space_metadata {
+        None => assert!(false, "Space is not existed!"),
+        Some(mut meta) => {
+          meta.total_point = meta.total_point + (init_point as u64) * 2;
+          self.space_metadata_by_id.insert(&space_id, &meta);
+        },
+      }
+    }
+    // update new point for space
+    let new_space_metadata = self.space_metadata_by_id.get(&space_id);
+
+    match new_space_metadata {
+      None => assert!(false, "Space is not existed!"),
+      Some(mut meta) => {
+        meta.total_point = meta.total_point + init_point as u64;
+        self.space_metadata_by_id.insert(&space_id, &meta);
+      },
     }
 
     thread_meta
@@ -234,9 +255,16 @@ impl ThreadFeatures for ThreadScoreContract {
         "Your point must be greater than thread init_point! {}",
         thread_metadata.init_point
       );
-      assert!(thread_metadata.creator_id != voter, "Thread creator can not vote!");
-      assert!(thread_metadata.partner_id.clone().unwrap() != voter, "Thread partner can not vote!");
+
       assert!(thread_metadata.choices_map.get(&choice_number).is_some(), "Your choice is not valid!");
+      assert!(thread_metadata.creator_id != voter, "Thread creator can not vote!");
+
+      if thread_metadata.thread_mode == 0 {
+        match thread_metadata.partner_id.clone() {
+          None => assert!(false, "partner_id is not valid!"),
+          Some(id) => assert!(id != voter, "Thread partner can not vote!"),
+        }
+      }
 
       // update user_votes_map
       let new_user_votes_map = thread_metadata.user_votes_map.get_key_value(&voter);
@@ -257,6 +285,17 @@ impl ThreadFeatures for ThreadScoreContract {
       thread_metadata.choices_rating.insert(choice_number, new_user_choice_rating);
 
       self.thread_metadata_by_id.insert(&thread_id, &thread_metadata);
+
+      // update new point for space
+      let new_space_metadata = self.space_metadata_by_id.get(&thread_metadata.space_id);
+
+      match new_space_metadata {
+        None => assert!(false, "Space is not existed!"),
+        Some(mut meta) => {
+          meta.total_point = meta.total_point + point as u64;
+          self.space_metadata_by_id.insert(&thread_metadata.space_id, &meta);
+        },
+      }
     }
 
     // update new point for user

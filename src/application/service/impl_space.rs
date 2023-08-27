@@ -23,6 +23,7 @@ impl SpaceFeatures for ThreadScoreContract {
       creator_id: env::signer_account_id(),
       created_at: env::block_timestamp_ms(),
       followed_users: Vec::new(),
+      total_point: 0_u64,
     };
 
     self.space_metadata_by_id.insert(&space_id, &new_space);
