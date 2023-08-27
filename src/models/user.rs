@@ -6,7 +6,7 @@ use near_sdk::{
   AccountId,
 };
 
-use super::thread::ThreadId;
+use super::{space::SpaceId, thread::ThreadId};
 
 /// `UserId` is a type alias for `AccountId`, typically representing a unique identifier for a user
 /// in the system.
@@ -70,6 +70,9 @@ pub struct JsonUser {
   /// Map of fraud threads associated with the user.
   pub fraud_list: Vec<ThreadId>,
 
+  /// Map of fraud threads associated with the user.
+  pub followed_space_list: Vec<SpaceId>,
+
   /// User's total points.
   pub total_point: i32,
 
@@ -96,7 +99,6 @@ pub trait UserTraits {
   // /// Returns a `JsonUser` representation of the user's metadata for the given user ID.
   fn get_user_metadata_by_user_id(&self, user_id: UserId) -> Option<JsonUser>;
 
-  // TODO: add readme.md
   // /// Update user information
   fn update_user_information(
     &mut self,
@@ -107,11 +109,9 @@ pub trait UserTraits {
     avatar: Option<String>,
   ) -> JsonUser;
 
-  // TODO: add readme.md
   // /// Get all information of users
   fn get_all_user_metadata(&self, from_index: Option<u32>, limit: Option<u32>) -> Vec<JsonUser>;
 
-  // TODO: add readme.md
   /// Check user role
   fn check_user_role(&self, user_id: UserId) -> UserRoles;
 

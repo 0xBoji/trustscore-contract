@@ -41,6 +41,7 @@ impl UserTraits for ThreadScoreContract {
       user_id: user_id.clone(),
       metadata: new_user_metadata,
       threads_list: Vec::new(),
+      followed_space_list: Vec::new(),
       threads_owned: 0_u32,
       total_point: 1000,
       fraud_list: Vec::new(),

@@ -67,8 +67,18 @@ impl SpaceFeatures for ThreadScoreContract {
         if is_followed {
           assert!(false, "You already follow this space!");
         } else {
-          metadata.followed_users.push(user);
+          metadata.followed_users.push(user.clone());
           self.space_metadata_by_id.insert(&space_id, &metadata);
+
+          let json_user_option = self.user_metadata_by_id.get(&user);
+
+          match json_user_option {
+            None => assert!(false, "User is not existed!"),
+            Some(mut json_user) => {
+              json_user.followed_space_list.push(space_id);
+              self.user_metadata_by_id.insert(&user, &json_user);
+            },
+          }
         }
       },
     }

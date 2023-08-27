@@ -75,6 +75,32 @@ page structure
   ```
   ''
   ```
+- active role cho 1 user by user_id
+
+  ```
+  cm call active_user_role '{"user_id":"gmfam.testnet"}' --account_id gmfam.testnet
+  ```
+
+  ```
+  {
+    user_id: 'gmfam.testnet',
+    metadata: {
+      user_id: 'gmfam.testnet',
+      nickname: 'longn',
+      role: 'Verified',
+      first_name: 'Ân',
+      last_name: 'Nguyễn Văn',
+      bio: 'this is my bio',
+      avatar: 'bafkreibnaelo4monu6jpndqtb3pmza22j7k77gcak3xrux6mrkdq5fakuu',
+      created_at: 1692823540083,
+      updated_at: 1692823540083
+    },
+    threads: [],
+    total_point: 1000,
+    threads_owned: 0
+  }
+  ```
+
 - get array danh sách id all user (sau khi đã đăng ký vào TS)
 
   ```
@@ -138,32 +164,6 @@ page structure
     total_point: 1000,
     threads_owned: 0,
     fraud_threads_owned: 0
-  }
-  ```
-
-- active role cho 1 user by user_id
-
-  ```
-  cm call active_user_role '{"user_id":"gmfam.testnet"}' --account_id gmfam.testnet
-  ```
-
-  ```
-  {
-    user_id: 'gmfam.testnet',
-    metadata: {
-      user_id: 'gmfam.testnet',
-      nickname: 'longn',
-      role: 'Verified',
-      first_name: 'Ân',
-      last_name: 'Nguyễn Văn',
-      bio: 'this is my bio',
-      avatar: 'bafkreibnaelo4monu6jpndqtb3pmza22j7k77gcak3xrux6mrkdq5fakuu',
-      created_at: 1692823540083,
-      updated_at: 1692823540083
-    },
-    threads: [],
-    total_point: 1000,
-    threads_owned: 0
   }
   ```
 

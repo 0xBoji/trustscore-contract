@@ -140,7 +140,25 @@ impl ThreadFeatures for ThreadScoreContract {
     new_json_creator.total_point = new_json_creator.total_point.checked_sub_unsigned(init_point).unwrap();
     new_json_creator.threads_list.push(thread_id.clone());
 
+    // update followed_space_list for user
+    if new_json_creator.followed_space_list.contains(&space_id) == false {
+      new_json_creator.followed_space_list.push(space_id.clone());
+    }
     self.user_metadata_by_id.insert(&creator_id, &new_json_creator);
+
+    // update followed_user for space
+    let new_space_metadata = self.space_metadata_by_id.get(&space_id);
+    match new_space_metadata {
+      None => assert!(false, "Space is not existed!!!"),
+      Some(mut meta) => {
+        if !meta.followed_users.contains(&creator_id) {
+          meta.followed_users.push(creator_id);
+
+          self.space_metadata_by_id.insert(&space_id, &meta);
+        }
+      },
+    }
+
     if thread_mode == 0 {
       // update partner
 
@@ -169,15 +187,18 @@ impl ThreadFeatures for ThreadScoreContract {
         },
       }
     }
-    // update new point for space
-    let new_space_metadata = self.space_metadata_by_id.get(&space_id);
 
-    match new_space_metadata {
-      None => assert!(false, "Space is not existed!"),
-      Some(mut meta) => {
-        meta.total_point = meta.total_point + init_point as u64;
-        self.space_metadata_by_id.insert(&space_id, &meta);
-      },
+    if thread_mode == 1 {
+      // update new point for space
+      let new_space_metadata = self.space_metadata_by_id.get(&space_id);
+
+      match new_space_metadata {
+        None => assert!(false, "Space is not existed!"),
+        Some(mut meta) => {
+          meta.total_point = meta.total_point + init_point as u64;
+          self.space_metadata_by_id.insert(&space_id, &meta);
+        },
+      }
     }
 
     thread_meta
