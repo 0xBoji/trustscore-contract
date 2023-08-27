@@ -24,6 +24,9 @@ pub struct SpaceMetadata {
 
   /// Date when the thread was created, represented as a timestamp.
   pub created_at: u64,
+
+  // List of user follow this Space
+  pub followed_users: Vec<UserId>,
 }
 
 pub trait SpaceFeatures {
@@ -36,4 +39,8 @@ pub trait SpaceFeatures {
 
   /// Get all the space. Current and complete space
   fn get_all_spaces(&self, from_index: Option<u32>, limit: Option<u32>) -> Vec<SpaceMetadata>;
+
+  fn follow_space(&mut self, space_id: String) -> Option<String>;
+
+  fn get_followed_user_of_space_by_space_id(&self, space_id: SpaceId) -> Vec<UserId>;
 }

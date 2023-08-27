@@ -6,6 +6,7 @@ use crate::{
     contract::{ThreadScoreContract, ThreadScoreContractExt},
     space::{SpaceFeatures, SpaceId, SpaceMetadata},
     thread::ThreadId,
+    user::UserId,
   },
 };
 
@@ -14,11 +15,14 @@ impl SpaceFeatures for ThreadScoreContract {
   fn create_space(&mut self, space_name: String) -> SpaceMetadata {
     let space_id = convert_title_to_id_no_account(&space_name);
 
+    assert!(!self.space_metadata_by_id.contains_key(&space_id), "Space name is existed!");
+
     let new_space = SpaceMetadata {
-      space_id:   space_id.clone(),
+      space_id: space_id.clone(),
       space_name: space_name.clone(),
       creator_id: env::signer_account_id(),
       created_at: env::block_timestamp_ms(),
+      followed_users: Vec::new(),
     };
 
     self.space_metadata_by_id.insert(&space_id, &new_space);
@@ -47,5 +51,35 @@ impl SpaceFeatures for ThreadScoreContract {
     }
 
     all_space
+  }
+
+  fn follow_space(&mut self, space_id: String) -> Option<String> {
+    let user = env::signer_account_id();
+
+    let space_metadata = self.space_metadata_by_id.get(&space_id);
+
+    match space_metadata {
+      None => assert!(false, "Space is not existed"),
+      Some(mut metadata) => {
+        let is_followed = metadata.followed_users.contains(&user);
+
+        if is_followed {
+          assert!(false, "You already follow this space!");
+        } else {
+          metadata.followed_users.push(user);
+          self.space_metadata_by_id.insert(&space_id, &metadata);
+        }
+      },
+    }
+
+    Some(String::from("OK"))
+  }
+
+  fn get_followed_user_of_space_by_space_id(&self, space_id: SpaceId) -> Vec<UserId> {
+    let space_metadata = self.space_metadata_by_id.get(&space_id);
+
+    assert!(space_metadata.is_some(), "Space is not existed");
+
+    space_metadata.unwrap().followed_users.to_vec()
   }
 }

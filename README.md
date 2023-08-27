@@ -70,7 +70,7 @@ page structure
 
 - tạo 1 user trên hệ thống TS
   ```
-  cm call create_user '{"nickname":"longn","first_name":"Ân","last_name":"Nguyễn Văn", "bio":"this is my bio" ,"avatar":"bafkreibnaelo4monu6jpndqtb3pmza22j7k77gcak3xrux6mrkdq5fakuu"}' --account_id gmfam.testnet
+  cm call create_user '{"nickname":"long","first_name":"Ân","last_name":"Nguyễn Văn", "bio":"this is my bio" ,"avatar":"bafkreibnaelo4monu6jpndqtb3pmza22j7k77gcak3xrux6mrkdq5fakuu"}' --account_id gmfam.testnet
   ```
   ```
   ''
@@ -355,9 +355,11 @@ page structure
   ```
 
 - get all spaces info
+
   ```
   cm call get_all_spaces --account_id gmfam.testnet
   ```
+
   ```
   [
     {
@@ -374,6 +376,43 @@ page structure
     }
   ]
   ```
+
+- create new spaces
+
+  ```
+  cm call create_space '{"space_name":"crypto trading"}'  --account_id gmfam.testnet
+  ```
+
+  ```
+  {
+    space_id: 'crypto_trading',
+    space_name: 'crypto trading',
+    creator_id: 'gmfam.testnet',
+    created_at: 1693107266493,
+    followed_users: []
+  }
+  ```
+
+- follow spaces_id
+
+  ```
+  cm call follow_space '{"space_id":"crypto_discuss"}'  --account_id gmfam.testnet
+  ```
+
+  ```
+  'OK'
+  ```
+
+- get all user followed by spaces_id
+
+  ```
+  cm call get_followed_user_of_space_by_space_id '{"space_id":"crypto_discuss"}' --account_id gmfam.testnet
+  ```
+
+  ```
+  'OK'
+  ```
+
 - vote thread by thread_id
 
   ```
