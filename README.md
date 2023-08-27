@@ -113,6 +113,34 @@ page structure
   }
   ```
 
+- update info của 1 user by user_id
+
+  ```
+  cm call update_user_information '{"nickname":"longlong"}' --account_id gmfam.testnet
+  ```
+
+  ```
+  {
+    user_id: 'gmfam.testnet',
+    metadata: {
+      user_id: 'gmfam.testnet',
+      nickname: 'longlong',
+      role: 'Verified',
+      first_name: 'Ân',
+      last_name: 'Nguyễn Văn',
+      bio: 'this is my bio',
+      avatar: 'bafkreibnaelo4monu6jpndqtb3pmza22j7k77gcak3xrux6mrkdq5fakuu',
+      created_at: 1693105707209,
+      updated_at: 1693107578924
+    },
+    threads_list: [],
+    fraud_list: [],
+    total_point: 1000,
+    threads_owned: 0,
+    fraud_threads_owned: 0
+  }
+  ```
+
 - active role cho 1 user by user_id
 
   ```
@@ -432,6 +460,85 @@ page structure
 
   ```
   OK
+  ```
+
+### **function list for reference**
+
+- main contract
+  ```
+  init()
+  ```
+  ```
+  new()
+  ```
+  ```
+  get_me()
+  ```
+  ```
+  get_owner_id()
+  ```
+  ```
+  get_subscriber_users()
+  ```
+- thread module
+  ```
+  create_thread()
+  ```
+  ```
+  get_thread_metadata_by_thread_id()
+  ```
+  ```
+  get_all_threads_per_user_own()
+  ```
+  ```
+  get_thread_status()
+  ```
+  ```
+  vote_thread()
+  ```
+  ```
+  end_thread()
+  ```
+- space module
+  ```
+  create_space()
+  ```
+  ```
+  get_space_metadata_by_space_id()
+  ```
+  ```
+  get_all_threads_of_space_by_space_id()
+  ```
+  ```
+  get_all_spaces()
+  ```
+  ```
+  follow_space()
+  ```
+  ```
+  get_followed_user_of_space_by_space_id()
+  ```
+- user module
+  ```
+  create_user()
+  ```
+  ```
+  get_user_metadata_by_user_id()
+  ```
+  ```
+  update_user_information()
+  ```
+  ```
+  get_all_user_metadata()
+  ```
+  ```
+  check_user_role()
+  ```
+  ```
+  active_user_role()
+  ```
+  ```
+  set_admin_user_role()
   ```
 
 ### Requirements
