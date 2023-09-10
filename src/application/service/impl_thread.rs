@@ -43,7 +43,7 @@ impl ThreadFeatures for ThreadScoreContract {
     // check user
     match self.user_metadata_by_id.get(&creator_id) {
       Some(creator_json) => {
-        assert!(creator_json.metadata.role == UserRoles::Verified, "Your account is not verified!");
+        // assert!(creator_json.metadata.role == UserRoles::Verified, "Your account is not verified!");
 
         assert!(creator_json.total_point > init_point as i32, "Your trust point is not enough to create new thread!");
       },
@@ -218,11 +218,15 @@ impl ThreadFeatures for ThreadScoreContract {
   ) -> Vec<ThreadMetadata> {
     let mut result: Vec<ThreadMetadata> = Vec::new();
 
-    let thread_array = self.threads_per_user.get(&user_id).unwrap();
-
-    for thread_id in thread_array.iter().skip(start.unwrap_or(0_u32) as usize).take(limit.unwrap_or(5) as usize) {
-      let thread_found = self.thread_metadata_by_id.get(&thread_id);
-      result.push(thread_found.unwrap());
+    // let thread_array = self.threads_per_user.get(&user_id);
+    match self.threads_per_user.get(&user_id) {
+      None => assert!(false, "Thread list is empty!"),
+      Some(thread_array) => {
+        for thread_id in thread_array.iter().skip(start.unwrap_or(0_u32) as usize).take(limit.unwrap_or(5) as usize) {
+          let thread_found = self.thread_metadata_by_id.get(&thread_id);
+          result.push(thread_found.unwrap());
+        }
+      },
     }
 
     result

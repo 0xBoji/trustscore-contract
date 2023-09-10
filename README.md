@@ -170,7 +170,7 @@ page structure
 - tạo 1 thread mới. mode 0 fraud
 
   ```
-  cm call create_thread '{"title": "thread title 01 fraud mode", "description": "thread desc 01 fraud mode", "media_link":"bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym", "init_point": 90, "space_name": "crypto trading", "start_time": "1692824790000", "end_time": "1695477352000", "options": ["gmfam.testnet", "long6789.testnet"], "partner_id":"long6789.testnet", "thread_mode": 0} ' --account_id gmfam.testnet
+  cm call create_thread '{"title": "I am a fraud patient", "description": "this is my first fraud post", "media_link":"bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym", "init_point": 10, "space_name": "crypto trading", "start_time": "1692824790000", "end_time": "1702162578000", "options": ["gmfam.testnet", "phapdev.testnet"], "partner_id":"phapdev.testnet", "thread_mode": 0} ' --account_id gmfam.testnet
   ```
 
   ```
@@ -220,7 +220,7 @@ page structure
 - tạo 1 thread mới. mode 1 simple
 
   ```
-  cm call create_thread '{"title": "thread title 02 simple mode", "description": "thread desc 02 simple mode", "media_link":"bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym", "init_point": 200, "space_name": "crypto trading", "start_time": "1692824790000", "end_time": "1695477352000", "options": ["No", "Yes"], "thread_mode": 1} ' --account_id gmfam.testnet
+  cm call create_thread '{"title": "Is crypto is the future?", "description": "Is crypto is the future? Lets discuss ...", "media_link":"bafkreifko42xz73mizlglr235icoexdicld5xqutbsymwph4fvnoktvnym", "init_point": 20, "space_name": "crypto trading", "start_time": "1692824790000", "end_time": "1702162578000", "options": ["No", "Yes"], "thread_mode": 1} ' --account_id gmfam.testnet
   ```
 
   ```

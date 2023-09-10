@@ -28,7 +28,7 @@ impl UserTraits for ThreadScoreContract {
     let new_user_metadata = UserMetadata {
       user_id: user_id.clone(),
       nickname: new_nickname,
-      role: UserRoles::Unverified,
+      role: UserRoles::Verified,
       first_name,
       last_name,
       bio,
