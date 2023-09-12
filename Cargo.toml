@@ -17,6 +17,7 @@ overflow-checks = true
 panic = "abort"
 
 [dependencies]
+schemars = { version = "0.8.13"}
 near-sdk = "4.1.1"
 unidecode = "0.3.0"
 

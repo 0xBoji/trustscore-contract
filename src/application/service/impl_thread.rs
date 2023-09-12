@@ -6,7 +6,7 @@ use crate::{
     contract::{StorageKey, ThreadScoreContract, ThreadScoreContractExt},
     space::SpaceFeatures,
     thread::{ThreadFeatures, ThreadId, ThreadMetadata, ThreadState},
-    user::{UserId, UserRoles},
+    user::UserId,
   },
 };
 use near_sdk::{borsh::BorshSerialize, collections::UnorderedSet, env, json_types::U64, near_bindgen, AccountId};

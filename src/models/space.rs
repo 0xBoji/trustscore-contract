@@ -2,6 +2,7 @@ use near_sdk::{
   borsh::{self, BorshDeserialize, BorshSerialize},
   serde::{Deserialize, Serialize},
 };
+use schemars::JsonSchema;
 
 use super::{thread::ThreadId, user::UserId};
 
@@ -10,7 +11,7 @@ use super::{thread::ThreadId, user::UserId};
 pub type SpaceId = String;
 
 /// The `SpaceMetadata` struct represents metadata for a Space in the system.
-#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone)]
+#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone, JsonSchema)]
 #[serde(crate = "near_sdk::serde")]
 pub struct SpaceMetadata {
   /// Unique identifier for the Space, of type `SpaceId`.

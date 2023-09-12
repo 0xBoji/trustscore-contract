@@ -6,6 +6,7 @@ use near_sdk::{
 };
 
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
+use schemars::JsonSchema;
 
 use super::{
   space::{SpaceId, SpaceMetadata},
@@ -14,7 +15,7 @@ use super::{
 };
 
 /// The `ThreadScoreContractMetadata` struct represents metadata for an ThreadScore contract.
-#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone)]
+#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone, JsonSchema)]
 #[serde(crate = "near_sdk::serde")]
 pub struct ThreadScoreContractMetadata {
   /// Specification associated with the ThreadScore contract.

@@ -5,6 +5,7 @@ use near_sdk::{
   serde::{Deserialize, Serialize},
   AccountId,
 };
+use schemars::JsonSchema;
 
 use super::{space::SpaceId, thread::ThreadId};
 
@@ -12,7 +13,7 @@ use super::{space::SpaceId, thread::ThreadId};
 /// in the system.
 pub type UserId = AccountId;
 
-#[derive(Default, BorshDeserialize, BorshSerialize, Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Default, BorshDeserialize, BorshSerialize, Deserialize, Serialize, Debug, PartialEq, JsonSchema)]
 #[serde(crate = "near_sdk::serde")]
 pub enum UserRoles {
   #[default]
@@ -22,7 +23,7 @@ pub enum UserRoles {
 }
 
 /// This struct represents a user's metadata in the system.
-#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Debug)]
+#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Debug, JsonSchema)]
 #[serde(crate = "near_sdk::serde")]
 pub struct UserMetadata {
   /// Unique identifier of the user.
@@ -55,7 +56,7 @@ pub struct UserMetadata {
 
 /// The `JsonUser` struct provides a comprehensive view of a user in the system.
 /// It includes metadata and threads.
-#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Debug)]
+#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Debug, JsonSchema)]
 #[serde(crate = "near_sdk::serde")]
 pub struct JsonUser {
   /// Unique identifier for the user, of type `UserId`.

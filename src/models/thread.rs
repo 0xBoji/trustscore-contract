@@ -6,6 +6,7 @@ use near_sdk::{
   serde::{Deserialize, Serialize},
   AccountId, Timestamp,
 };
+use schemars::JsonSchema;
 
 use super::user::UserId;
 
@@ -13,7 +14,7 @@ use super::user::UserId;
 /// in the system.
 pub type ThreadId = String;
 
-#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone, PartialEq)]
+#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone, PartialEq, JsonSchema)]
 #[serde(crate = "near_sdk::serde")]
 pub enum ThreadState {
   Closed,
@@ -30,7 +31,7 @@ pub struct ThreadVote {
   voter: UserId,
 }
 /// The `ThreadMetadata` struct represents metadata for a thread in the system.
-#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone)]
+#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Clone, JsonSchema)]
 #[serde(crate = "near_sdk::serde")]
 pub struct ThreadMetadata {
   /// Unique identifier for the thread, of type `ThreadId`.
