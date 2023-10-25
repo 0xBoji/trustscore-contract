@@ -22,7 +22,7 @@ pub struct ThreadScoreContractMetadata {
   pub spec: String,
 
   /// Name of the ThreadScore contract.
-  pub name: String,
+  pub name: String, 
 
   /// Symbol associated with the ThreadScore contract.
   pub symbol: String,
